@@ -1,0 +1,169 @@
+<mat-sidenav-container>
+  <mat-sidenav
+    #sidenav
+    [mode]="isMobile ? 'over' : 'side'"
+    [(opened)]="sidebarOpened"
+    class="custom-sidebar"
+  >
+    <div class="sidebar-content">
+      <!-- Close button inside sidebar -->
+      <button
+        mat-icon-button
+        class="sidebar-close-button"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="'Close sidebar'"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <app-map-controls
+        [controlsData]="controlsData"
+        [controlsOptions]="controlsOptions"
+        [showDropDownControls]="true"
+        (controlsChange)="onControlsChange($event)"
+      ></app-map-controls>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <!-- Sidebar toggle button -->
+    <button
+      *ngIf="!sidebarOpened"
+      mat-icon-button
+      class="sidebar-toggle-button"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="'Open sidebar'"
+    >
+      <mat-icon>tune</mat-icon>
+    </button>
+
+    <app-mobile-hamburger-menu
+      [isMobile]="isMobile"
+    ></app-mobile-hamburger-menu>
+
+    <!-- Location search overlay -->
+    <app-location-search></app-location-search>
+
+    <!-- Location button -->
+    <button
+      mat-icon-button
+      class="location-button"
+      (click)="onLocationButtonClick()"
+      [attr.aria-label]="'Use device location'"
+      title="Use device location"
+    >
+      <mat-icon>my_location</mat-icon>
+    </button>
+
+    <!-- Contour lines toggle -->
+    <app-contour-toggle-overlay
+      *ngIf="!environment.production"
+      [isActive]="controlsData.showContourLines"
+      [disabled]="!selectedOption"
+      (toggleChange)="onContourToggle($event)"
+    ></app-contour-toggle-overlay>
+
+    <!-- Show change toggle -->
+    <app-show-change-toggle-overlay
+      [isActive]="controlsData.showDifferenceMap"
+      [disabled]="!shouldShowDifferenceCheckbox()"
+      (toggleChange)="onShowChangeToggle($event)"
+    ></app-show-change-toggle-overlay>
+
+    <!-- Climate scenario overlay -->
+    <app-climate-scenario-overlay
+      [show]="shouldShowFutureControls()"
+      [selectedClimateScenario]="controlsData.selectedClimateScenario"
+      [climateScenarios]="controlsOptions?.climateScenarios || []"
+      [availableClimateScenarios]="
+        controlsOptions?.availableClimateScenarios || []
+      "
+      (climateScenarioChange)="onClimateScenarioChangeOverlay($event)"
+    ></app-climate-scenario-overlay>
+
+    <!-- Climate model overlay -->
+    <app-climate-model-overlay
+      [show]="shouldShowFutureControls()"
+      [selectedClimateModel]="controlsData.selectedClimateModel"
+      [climateModels]="controlsOptions?.climateModels || []"
+      [availableClimateModels]="controlsOptions?.availableClimateModels || []"
+      (climateModelChange)="onClimateModelChangeOverlay($event)"
+    ></app-climate-model-overlay>
+
+    <div
+      class="page-content-wrapper"
+      leaflet
+      [leafletOptions]="options"
+      (leafletClick)="onMapClick($event)"
+      (leafletMapReady)="onMapReady($event)"
+      (leafletMapMoveEnd)="onMove($event)"
+      (leafletMapZoomEnd)="onZoom($event)"
+      (leafletMouseMove)="onMouseMove($event)"
+    ></div>
+
+    <!-- Month and Year Range Display -->
+    <div class="map-info-display" *ngIf="controlsData.selectedYearRange">
+      <div class="info-value">
+        {{ climateVariables[controlsData.selectedVariableType].displayName
+        }}<span
+          *ngIf="
+            controlsData.showDifferenceMap && shouldShowDifferenceCheckbox()
+          "
+          class="change-indicator"
+        >
+          Change</span
+        >
+        -
+        {{ getMonthName(monthSelected) }}
+        {{ formatYearRange(controlsData.selectedYearRange.value) }}
+        <span *ngIf="isPredictionYearRange()" class="prediction-indicator"
+          >(Model Prediction)</span
+        >
+      </div>
+    </div>
+
+    <!-- Variable selector overlay -->
+    <app-variable-selector-overlay
+      [selectedVariableType]="controlsData.selectedVariableType"
+      [availableVariableTypes]="controlsOptions?.availableVariableTypes || []"
+      [climateVariables]="climateVariables"
+      (variableChange)="onVariableChange($event)"
+    ></app-variable-selector-overlay>
+
+    <!-- Mobile date control overlay (mobile only) -->
+    <app-mobile-date-control-overlay
+      [selectedMonth]="controlsData.selectedMonth"
+      [selectedYearRange]="controlsData.selectedYearRange"
+      [yearRanges]="yearRanges"
+      [disabled]="shouldDisableYearSlider()"
+      (monthChange)="onMonthChange($event)"
+      (yearRangeChange)="onYearRangeChange($event)"
+    ></app-mobile-date-control-overlay>
+
+    <!-- Desktop controls - only show on desktop -->
+    <div *ngIf="!isMobile" class="desktop-controls-overlay">
+      <app-map-controls
+        [controlsData]="controlsData"
+        [controlsOptions]="controlsOptions"
+        [showDropDownControls]="false"
+        (controlsChange)="onControlsChange($event)"
+      ></app-map-controls>
+    </div>
+
+    <app-colorbar-json
+      [dataType]="selectedOption?.climateMap?.dataType || null"
+      [width]="isMobile ? 12 : 14"
+    ></app-colorbar-json>
+
+    <!-- Climate plots component -->
+    <app-climate-plots
+      #climatePlots
+      [isMobile]="isMobile"
+      [plotData]="plotData"
+      [timerangePlotData]="timerangePlotData"
+      [yearRange]="controlsData.selectedYearRange"
+      [climateScenario]="controlsData.selectedClimateScenario"
+      [climateModel]="controlsData.selectedClimateModel"
+      (plotDataRequested)="onPlotDataRequested($event)"
+    ></app-climate-plots>
+  </mat-sidenav-content>
+</mat-sidenav-container>

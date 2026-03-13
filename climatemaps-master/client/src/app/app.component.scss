@@ -1,0 +1,50 @@
+@import "../styles/variables";
+
+mat-toolbar {
+  background-color: white !important;
+  color: #1565c0;
+  min-height: $navbar-height !important;
+  height: $navbar-height !important;
+  display: flex;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.settings-button {
+  margin-left: 4px;
+}
+
+.settings-menu-content {
+  padding: 16px;
+  min-width: 220px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.app-title-link {
+  text-decoration: none;
+  color: #1565c0;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 8px;
+  margin-right: 24px;
+}

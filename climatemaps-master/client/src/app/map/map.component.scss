@@ -1,0 +1,209 @@
+@import "../../styles/variables";
+
+.card-sidebar {
+  margin-left: 6px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.controls-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dropdown-field {
+  flex: 1;
+  margin-right: 16px;
+  min-width: 200px;
+}
+
+.dropdown-field:last-child {
+  margin-right: 0;
+}
+
+.checkbox-field {
+  margin-bottom: 0;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+// Styling for disabled dropdown options
+::ng-deep .disabled-option {
+  color: #999 !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+::ng-deep .disabled-option:hover {
+  background-color: transparent !important;
+}
+
+// Sidebar toggle button
+.sidebar-toggle-button {
+  position: fixed;
+  top: 16px;
+  left: 10px;
+  z-index: 2000;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  @media (min-width: 769px) {
+    top: 120px;
+  }
+}
+
+// Location button
+.location-button {
+  position: fixed;
+  top: 80px;
+  left: 10px;
+  z-index: 500;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  @media (min-width: 769px) {
+    bottom: 120px;
+    right: 20px;
+    left: auto;
+    top: auto;
+  }
+}
+
+// Map info display (month and year range)
+.map-info-display {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  .info-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .info-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+
+    .change-indicator {
+      color: #2e7d32; // Dark green for change indicator
+      font-weight: 700;
+    }
+
+    .prediction-indicator {
+      color: #ab3ce7;
+      margin-left: 4px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 14px;
+    min-width: calc(100vw - 180px);
+    max-width: calc(100vw - 150px);
+
+    .info-label {
+      font-size: 10px;
+    }
+
+    .info-value {
+      font-size: 13px;
+    }
+  }
+}
+
+// Sidebar content styling
+.sidebar-content {
+  padding: 10px 5px;
+  height: $page-height-mobile;
+  overflow-y: auto;
+  position: relative;
+
+  @media (min-width: 769px) {
+    height: calc($page-height - $bottom-controls-height);
+  }
+}
+
+// Sidebar close button
+.sidebar-close-button {
+  position: relative;
+  float: right;
+  margin-left: 8px;
+}
+
+// Custom sidebar styling
+::ng-deep .custom-sidebar {
+  width: 100vw !important;
+  max-width: 100vw !important;
+
+  @media (min-width: 769px) {
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+}
+
+// Mobile-specific styling
+@media (max-width: 768px) {
+  .desktop-controls {
+    display: none;
+  }
+
+  .page-content-wrapper {
+    height: $page-height-mobile;
+  }
+}
+
+// Zoom controls positioning
+@media (min-width: 769px) {
+  ::ng-deep .leaflet-control-zoom {
+    top: 100px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .leaflet-control-zoom {
+    display: none !important;
+  }
+}

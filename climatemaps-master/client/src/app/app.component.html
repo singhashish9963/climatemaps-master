@@ -1,0 +1,51 @@
+<mat-toolbar *ngIf="!isMobile">
+  <a routerLink="/" class="app-title-link">
+    <span>{{ title }}</span>
+  </a>
+
+  <a mat-button routerLink="/">Map</a>
+  <a mat-button routerLink="/seasons">Seasons</a>
+  <a mat-button routerLink="/climate-predictions">Climate Predictions</a>
+  <a mat-button routerLink="/climate-scenarios">Climate Scenarios</a>
+  <a mat-button routerLink="/climate-matrix">Climate Matrix</a>
+
+  <span class="spacer"></span>
+
+  <a mat-button routerLink="/about">About</a>
+  <a
+    mat-icon-button
+    href="https://github.com/bartromgens/climatemaps"
+    target="_blank"
+    aria-label="GitHub"
+  >
+    <mat-icon svgIcon="github"></mat-icon>
+  </a>
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="settingsMenu"
+    aria-label="Settings"
+    class="settings-button"
+  >
+    <mat-icon>settings</mat-icon>
+  </button>
+
+  <mat-menu #settingsMenu="matMenu">
+    <div
+      class="settings-menu-content"
+      (click)="$event.stopPropagation()"
+      (keydown)="$event.stopPropagation()"
+      tabindex="0"
+    >
+      <div class="settings-section">
+        <span class="settings-label">Temperature Unit</span>
+        <app-temperature-unit-selector></app-temperature-unit-selector>
+      </div>
+      <div class="settings-section">
+        <span class="settings-label">Precipitation Unit</span>
+        <app-precipitation-unit-selector></app-precipitation-unit-selector>
+      </div>
+    </div>
+  </mat-menu>
+</mat-toolbar>
+
+<router-outlet></router-outlet>

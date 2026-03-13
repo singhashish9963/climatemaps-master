@@ -1,0 +1,5 @@
+@import './slider-common.scss';
+
+.month-labels {
+  @extend .slider-labels;
+}

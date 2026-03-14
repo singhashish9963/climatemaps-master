@@ -298,18 +298,179 @@
 
       </div>
 
-      <!-- Chart -->
-      <div class="chart-card" *ngIf="dataA.monthlyData && dataB.monthlyData">
-        <canvas #chartCanvas></canvas>
+      <!-- Chart tab navigation -->
+      <div class="chart-tabs">
+        <button
+          class="chart-tab"
+          [class.active]="selectedTab === 'monthly'"
+          (click)="switchTab('monthly')"
+          title="Monthly climatology (WorldClim averages)"
+        >
+          <mat-icon>calendar_month</mat-icon>
+          Monthly
+        </button>
+        <button
+          class="chart-tab"
+          [class.active]="selectedTab === 'trends'"
+          (click)="switchTab('trends')"
+          title="Year-by-year temperature and precipitation trends (1950–2024)"
+        >
+          <mat-icon>trending_up</mat-icon>
+          Trends (1950–2024)
+        </button>
+        <button
+          class="chart-tab"
+          [class.active]="selectedTab === 'forecast'"
+          (click)="switchTab('forecast')"
+          title="7-day weather forecast"
+        >
+          <mat-icon>wb_cloudy</mat-icon>
+          7-Day Forecast
+        </button>
       </div>
 
-      <div
-        class="chart-placeholder"
-        *ngIf="!(dataA.monthlyData && dataB.monthlyData)"
-      >
-        <mat-icon>insert_chart_outlined</mat-icon>
-        <p>Select both locations to see the monthly comparison chart</p>
-      </div>
+      <!-- ─── Monthly climatology (existing chart) ──────────────────── -->
+      <ng-container *ngIf="selectedTab === 'monthly'">
+        <div class="chart-card" *ngIf="dataA.monthlyData && dataB.monthlyData">
+          <canvas #chartCanvas></canvas>
+        </div>
+        <div
+          class="chart-placeholder"
+          *ngIf="!(dataA.monthlyData && dataB.monthlyData)"
+        >
+          <mat-icon>insert_chart_outlined</mat-icon>
+          <p>Select both locations to see the monthly comparison chart</p>
+        </div>
+      </ng-container>
+
+      <!-- ─── Historical Trends ──────────────────────────────────────── -->
+      <ng-container *ngIf="selectedTab === 'trends'">
+        <p class="section-note">
+          Annual mean temperature &amp; total precipitation, 1950–2024 &mdash;
+          ERA5 reanalysis via <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+        </p>
+
+        <!-- Loading state -->
+        <div class="trend-loading" *ngIf="isLoadingTrendA || isLoadingTrendB">
+          <mat-spinner diameter="22"></mat-spinner>
+          <span>Loading 70+ years of historical data&hellip; (may take a few seconds)</span>
+        </div>
+
+        <!-- Error state -->
+        <div class="inline-error" *ngIf="(trendErrorA || trendErrorB) && !isLoadingTrendA && !isLoadingTrendB">
+          <mat-icon>error_outline</mat-icon>
+          {{ trendErrorA || trendErrorB }}
+        </div>
+
+        <!-- Trend chart -->
+        <div
+          class="chart-card trend-chart-card"
+          *ngIf="trendDataA && trendDataB && !isLoadingTrendA && !isLoadingTrendB"
+        >
+          <canvas #trendChartCanvas></canvas>
+        </div>
+
+        <!-- Empty state -->
+        <div
+          class="chart-placeholder"
+          *ngIf="!locationA || !locationB"
+        >
+          <mat-icon>show_chart</mat-icon>
+          <p>Set both locations to compare 70+ years of climate trends</p>
+        </div>
+      </ng-container>
+
+      <!-- ─── 7-Day Forecast ─────────────────────────────────────────── -->
+      <ng-container *ngIf="selectedTab === 'forecast'">
+
+        <!-- No locations -->
+        <div class="chart-placeholder" *ngIf="!locationA && !locationB">
+          <mat-icon>wb_cloudy</mat-icon>
+          <p>Set at least one location to see the 7-day forecast</p>
+        </div>
+
+        <div class="forecast-section" *ngIf="locationA || locationB">
+
+          <!-- Location A forecast -->
+          <div class="forecast-location-block" *ngIf="locationA">
+            <div class="forecast-loc-header">
+              <span class="marker-badge badge-a">A</span>
+              <span class="forecast-city-name">{{ getLocationLabel(locationA, 'A') }}</span>
+              <mat-spinner *ngIf="isLoadingForecastA" diameter="16" class="card-spinner"></mat-spinner>
+            </div>
+            <div class="inline-error small" *ngIf="forecastErrorA && !isLoadingForecastA">{{ forecastErrorA }}</div>
+            <div class="forecast-days-row" *ngIf="forecastDataA && !isLoadingForecastA">
+              <div class="forecast-day-card" *ngFor="let day of forecastDataA.days">
+                <span class="fc-date">{{ formatForecastDate(day.date) }}</span>
+                <mat-icon class="fc-icon">{{ getWeatherIcon(day.weather_code) }}</mat-icon>
+                <span class="fc-desc">{{ getWeatherDesc(day.weather_code) }}</span>
+                <div class="fc-temps">
+                  <span class="fc-high">{{ formatForecastTemp(day.temp_max) }}</span>
+                  <span class="fc-sep">/</span>
+                  <span class="fc-low">{{ formatForecastTemp(day.temp_min) }}</span>
+                </div>
+                <div class="fc-precip">
+                  <ng-container *ngIf="day.precip_sum && day.precip_sum > 0">
+                    <mat-icon class="fc-precip-icon">water_drop</mat-icon>
+                    {{ day.precip_sum | number:'1.1-1' }}mm
+                  </ng-container>
+                  <ng-container *ngIf="day.snowfall_sum && day.snowfall_sum > 0">
+                    &nbsp;<mat-icon class="fc-snow-icon">ac_unit</mat-icon>
+                    {{ day.snowfall_sum | number:'1.1-1' }}cm
+                  </ng-container>
+                  <ng-container *ngIf="(!day.precip_sum || day.precip_sum === 0) && (!day.snowfall_sum || day.snowfall_sum === 0)">
+                    <span class="fc-dry">dry</span>
+                  </ng-container>
+                </div>
+                <div class="fc-wind" *ngIf="day.wind_speed_max !== null">
+                  <mat-icon class="fc-wind-icon">air</mat-icon>
+                  {{ day.wind_speed_max | number:'1.0-0' }} km/h
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location B forecast -->
+          <div class="forecast-location-block" *ngIf="locationB">
+            <div class="forecast-loc-header">
+              <span class="marker-badge badge-b">B</span>
+              <span class="forecast-city-name">{{ getLocationLabel(locationB, 'B') }}</span>
+              <mat-spinner *ngIf="isLoadingForecastB" diameter="16" class="card-spinner"></mat-spinner>
+            </div>
+            <div class="inline-error small" *ngIf="forecastErrorB && !isLoadingForecastB">{{ forecastErrorB }}</div>
+            <div class="forecast-days-row" *ngIf="forecastDataB && !isLoadingForecastB">
+              <div class="forecast-day-card" *ngFor="let day of forecastDataB.days">
+                <span class="fc-date">{{ formatForecastDate(day.date) }}</span>
+                <mat-icon class="fc-icon">{{ getWeatherIcon(day.weather_code) }}</mat-icon>
+                <span class="fc-desc">{{ getWeatherDesc(day.weather_code) }}</span>
+                <div class="fc-temps">
+                  <span class="fc-high">{{ formatForecastTemp(day.temp_max) }}</span>
+                  <span class="fc-sep">/</span>
+                  <span class="fc-low">{{ formatForecastTemp(day.temp_min) }}</span>
+                </div>
+                <div class="fc-precip">
+                  <ng-container *ngIf="day.precip_sum && day.precip_sum > 0">
+                    <mat-icon class="fc-precip-icon">water_drop</mat-icon>
+                    {{ day.precip_sum | number:'1.1-1' }}mm
+                  </ng-container>
+                  <ng-container *ngIf="day.snowfall_sum && day.snowfall_sum > 0">
+                    &nbsp;<mat-icon class="fc-snow-icon">ac_unit</mat-icon>
+                    {{ day.snowfall_sum | number:'1.1-1' }}cm
+                  </ng-container>
+                  <ng-container *ngIf="(!day.precip_sum || day.precip_sum === 0) && (!day.snowfall_sum || day.snowfall_sum === 0)">
+                    <span class="fc-dry">dry</span>
+                  </ng-container>
+                </div>
+                <div class="fc-wind" *ngIf="day.wind_speed_max !== null">
+                  <mat-icon class="fc-wind-icon">air</mat-icon>
+                  {{ day.wind_speed_max | number:'1.0-0' }} km/h
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </ng-container>
 
     </ng-container>
 

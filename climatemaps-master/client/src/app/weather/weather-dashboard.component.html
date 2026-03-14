@@ -1,0 +1,393 @@
+<div class="weather-dashboard">
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <mat-icon class="search-icon">search</mat-icon>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search for a city or location…"
+      [formControl]="searchControl"
+      [matAutocomplete]="autoLoc"
+      aria-label="Search location"
+    />
+    <mat-spinner
+      *ngIf="isLoadingSearch$ | async"
+      diameter="18"
+      class="search-spinner"
+    ></mat-spinner>
+    <button
+      *ngIf="searchControl.value && !(isLoadingSearch$ | async)"
+      mat-icon-button
+      class="clear-btn"
+      (click)="clearSearch()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+    <mat-autocomplete
+      #autoLoc="matAutocomplete"
+      [displayWith]="displayLocationName"
+      (optionSelected)="onLocationSelected($event.option.value)"
+    >
+      <mat-option
+        *ngFor="let loc of filteredLocations$ | async"
+        [value]="loc"
+      >
+        {{ loc.displayName }}
+      </mat-option>
+    </mat-autocomplete>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading weather data…</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" *ngIf="error && !isLoading">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Dashboard -->
+  <ng-container *ngIf="data && !isLoading && !error">
+
+    <!-- Location header -->
+    <div class="location-header">
+      <h1 class="city-name">{{ cityName || 'Weather Dashboard' }}</h1>
+      <span class="country-name" *ngIf="countryName">{{ countryName }}</span>
+      <span class="coords">
+        {{ data.latitude.toFixed(2) }}°, {{ data.longitude.toFixed(2) }}°
+        <span *ngIf="data.elevation !== null"> · {{ data.elevation }}m elevation</span>
+        · {{ data.timezone_abbreviation }}
+      </span>
+    </div>
+
+    <!-- ════════ CURRENT CONDITIONS ════════ -->
+    <section class="section current-section">
+      <h2 class="section-title">
+        <mat-icon>thermostat</mat-icon>
+        Current Conditions
+      </h2>
+      <div class="current-hero">
+        <div class="hero-main">
+          <mat-icon class="hero-icon" [class.night]="data.current.is_day === 0">
+            {{ data.current.is_day === 0 ? 'nightlight' : getWeatherIcon(data.current.weather_code) }}
+          </mat-icon>
+          <div class="hero-temp">
+            <span class="temp-big">{{ convertTemp(data.current.temperature) }}{{ tempSuffix() }}</span>
+            <span class="feels-like">Feels like {{ convertTemp(data.current.apparent_temperature) }}{{ tempSuffix() }}</span>
+            <span class="weather-desc">{{ getWeatherDesc(data.current.weather_code) }}</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <mat-icon>water_drop</mat-icon>
+            <span class="stat-label">Humidity</span>
+            <span class="stat-value">{{ data.current.relative_humidity ?? '—' }}%</span>
+          </div>
+          <div class="stat-card">
+            <mat-icon>air</mat-icon>
+            <span class="stat-label">Wind</span>
+            <span class="stat-value">{{ data.current.wind_speed ?? '—' }} km/h {{ windDirectionLabel(data.current.wind_direction) }}</span>
+          </div>
+          <div class="stat-card">
+            <mat-icon>storm</mat-icon>
+            <span class="stat-label">Gusts</span>
+            <span class="stat-value">{{ data.current.wind_gusts ?? '—' }} km/h</span>
+          </div>
+          <div class="stat-card">
+            <mat-icon>cloud</mat-icon>
+            <span class="stat-label">Cloud Cover</span>
+            <span class="stat-value">{{ data.current.cloud_cover ?? '—' }}%</span>
+          </div>
+          <div class="stat-card">
+            <mat-icon>compress</mat-icon>
+            <span class="stat-label">Pressure (MSL)</span>
+            <span class="stat-value">{{ data.current.pressure_msl ?? '—' }} hPa</span>
+          </div>
+          <div class="stat-card">
+            <mat-icon>speed</mat-icon>
+            <span class="stat-label">Surface Pressure</span>
+            <span class="stat-value">{{ data.current.surface_pressure ?? '—' }} hPa</span>
+          </div>
+          <div class="stat-card">
+            <mat-icon>water</mat-icon>
+            <span class="stat-label">Precipitation</span>
+            <span class="stat-value">{{ data.current.precipitation ?? 0 }} mm</span>
+          </div>
+          <div class="stat-card" *ngIf="data.current.rain !== null && data.current.rain! > 0">
+            <mat-icon>water_drop</mat-icon>
+            <span class="stat-label">Rain</span>
+            <span class="stat-value">{{ data.current.rain }} mm</span>
+          </div>
+          <div class="stat-card" *ngIf="data.current.showers !== null && data.current.showers! > 0">
+            <mat-icon>shower</mat-icon>
+            <span class="stat-label">Showers</span>
+            <span class="stat-value">{{ data.current.showers }} mm</span>
+          </div>
+          <div class="stat-card" *ngIf="data.current.snowfall !== null && data.current.snowfall! > 0">
+            <mat-icon>ac_unit</mat-icon>
+            <span class="stat-label">Snowfall</span>
+            <span class="stat-value">{{ data.current.snowfall }} cm</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ TODAY'S DETAILS ════════ -->
+    <section class="section" *ngIf="today">
+      <h2 class="section-title">
+        <mat-icon>today</mat-icon>
+        Today's Details
+      </h2>
+      <div class="details-grid">
+        <div class="detail-card sunrise">
+          <mat-icon>wb_twilight</mat-icon>
+          <span class="detail-label">Sunrise</span>
+          <span class="detail-value">{{ formatTime(today.sunrise) }}</span>
+        </div>
+        <div class="detail-card sunset">
+          <mat-icon>nights_stay</mat-icon>
+          <span class="detail-label">Sunset</span>
+          <span class="detail-value">{{ formatTime(today.sunset) }}</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>light_mode</mat-icon>
+          <span class="detail-label">Daylight</span>
+          <span class="detail-value">{{ formatDuration(today.daylight_duration) }}</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>wb_sunny</mat-icon>
+          <span class="detail-label">Sunshine</span>
+          <span class="detail-value">{{ formatDuration(today.sunshine_duration) }}</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>thermostat</mat-icon>
+          <span class="detail-label">Feels Like Range</span>
+          <span class="detail-value">{{ convertTemp(today.apparent_temp_min) }}° – {{ convertTemp(today.apparent_temp_max) }}{{ tempSuffix() }}</span>
+        </div>
+        <div class="detail-card" [style.color]="uvColor(today.uv_index_max)">
+          <mat-icon>wb_iridescent</mat-icon>
+          <span class="detail-label">UV Index</span>
+          <span class="detail-value">{{ today.uv_index_max?.toFixed(1) ?? '—' }} ({{ uvLevel(today.uv_index_max) }})</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>water</mat-icon>
+          <span class="detail-label">Total Precipitation</span>
+          <span class="detail-value">{{ today.precipitation_sum?.toFixed(1) ?? '0' }} mm</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>water_drop</mat-icon>
+          <span class="detail-label">Rain</span>
+          <span class="detail-value">{{ today.rain_sum?.toFixed(1) ?? '0' }} mm</span>
+        </div>
+        <div class="detail-card" *ngIf="today.showers_sum !== null && today.showers_sum! > 0">
+          <mat-icon>shower</mat-icon>
+          <span class="detail-label">Showers</span>
+          <span class="detail-value">{{ today.showers_sum?.toFixed(1) }} mm</span>
+        </div>
+        <div class="detail-card" *ngIf="today.snowfall_sum !== null && today.snowfall_sum! > 0">
+          <mat-icon>ac_unit</mat-icon>
+          <span class="detail-label">Snowfall</span>
+          <span class="detail-value">{{ today.snowfall_sum?.toFixed(1) }} cm</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>schedule</mat-icon>
+          <span class="detail-label">Precip Hours</span>
+          <span class="detail-value">{{ today.precipitation_hours?.toFixed(0) ?? '0' }}h</span>
+        </div>
+        <div class="detail-card" *ngIf="today.precipitation_probability_max !== null">
+          <mat-icon>percent</mat-icon>
+          <span class="detail-label">Precip Probability</span>
+          <span class="detail-value">{{ today.precipitation_probability_max }}%</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>air</mat-icon>
+          <span class="detail-label">Max Wind</span>
+          <span class="detail-value">{{ today.wind_speed_max?.toFixed(1) ?? '—' }} km/h</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>storm</mat-icon>
+          <span class="detail-label">Max Gusts</span>
+          <span class="detail-value">{{ today.wind_gusts_max?.toFixed(1) ?? '—' }} km/h</span>
+        </div>
+        <div class="detail-card">
+          <mat-icon>explore</mat-icon>
+          <span class="detail-label">Wind Direction</span>
+          <span class="detail-value">{{ windDirectionLabel(today.wind_direction_dominant) }} ({{ today.wind_direction_dominant ?? '—' }}°)</span>
+        </div>
+        <div class="detail-card" *ngIf="today.shortwave_radiation_sum !== null">
+          <mat-icon>solar_power</mat-icon>
+          <span class="detail-label">Solar Radiation</span>
+          <span class="detail-value">{{ today.shortwave_radiation_sum?.toFixed(1) }} MJ/m²</span>
+        </div>
+        <div class="detail-card" *ngIf="today.et0_fao_evapotranspiration !== null">
+          <mat-icon>grass</mat-icon>
+          <span class="detail-label">Evapotranspiration</span>
+          <span class="detail-value">{{ today.et0_fao_evapotranspiration?.toFixed(2) }} mm</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ HOURLY FORECAST (next 24h) ════════ -->
+    <section class="section">
+      <h2 class="section-title">
+        <mat-icon>schedule</mat-icon>
+        Hourly Forecast (Next 24h)
+      </h2>
+
+      <!-- Hourly chart -->
+      <div class="chart-container">
+        <canvas #hourlyChart></canvas>
+      </div>
+
+      <!-- Hourly cards scroll -->
+      <div class="hourly-scroll">
+        <div class="hourly-card" *ngFor="let h of next24Hours">
+          <span class="hc-time">{{ formatHour(h.time) }}</span>
+          <mat-icon class="hc-icon" [class.night]="h.is_day === 0">
+            {{ h.is_day === 0 ? 'nightlight' : getWeatherIcon(h.weather_code) }}
+          </mat-icon>
+          <span class="hc-temp">{{ convertTemp(h.temperature) }}°</span>
+          <div class="hc-details">
+            <span matTooltip="Precipitation probability">
+              <mat-icon class="hc-mini-icon">water_drop</mat-icon>
+              {{ h.precipitation_probability ?? 0 }}%
+            </span>
+            <span matTooltip="Humidity">
+              <mat-icon class="hc-mini-icon">humidity_percentage</mat-icon>
+              {{ h.relative_humidity ?? '—' }}%
+            </span>
+            <span matTooltip="Wind speed">
+              <mat-icon class="hc-mini-icon">air</mat-icon>
+              {{ h.wind_speed?.toFixed(0) ?? '—' }}
+            </span>
+          </div>
+          <div class="hc-extra" *ngIf="h.uv_index !== null && h.uv_index! > 0">
+            <span class="uv-badge" [style.background]="uvColor(h.uv_index)">
+              UV {{ h.uv_index?.toFixed(0) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ 7-DAY FORECAST ════════ -->
+    <section class="section">
+      <h2 class="section-title">
+        <mat-icon>date_range</mat-icon>
+        7-Day Forecast
+      </h2>
+
+      <!-- Daily chart -->
+      <div class="chart-container">
+        <canvas #dailyChart></canvas>
+      </div>
+
+      <!-- Daily cards -->
+      <div class="daily-list">
+        <div class="daily-card" *ngFor="let day of data.daily">
+          <div class="dc-date">
+            <span class="dc-day">{{ formatDate(day.date) }}</span>
+            <mat-icon class="dc-icon">{{ getWeatherIcon(day.weather_code) }}</mat-icon>
+            <span class="dc-desc">{{ getWeatherDesc(day.weather_code) }}</span>
+          </div>
+          <div class="dc-temps">
+            <span class="dc-high">{{ convertTemp(day.temp_max) }}°</span>
+            <div class="temp-bar">
+              <div class="temp-bar-fill"></div>
+            </div>
+            <span class="dc-low">{{ convertTemp(day.temp_min) }}°</span>
+          </div>
+          <div class="dc-details">
+            <span class="dc-detail" matTooltip="Precipitation">
+              <mat-icon>water</mat-icon> {{ day.precipitation_sum?.toFixed(1) ?? '0' }}mm
+            </span>
+            <span class="dc-detail" *ngIf="day.rain_sum !== null && day.rain_sum! > 0" matTooltip="Rain">
+              <mat-icon>water_drop</mat-icon> {{ day.rain_sum?.toFixed(1) }}mm
+            </span>
+            <span class="dc-detail" *ngIf="day.snowfall_sum !== null && day.snowfall_sum! > 0" matTooltip="Snowfall">
+              <mat-icon>ac_unit</mat-icon> {{ day.snowfall_sum?.toFixed(1) }}cm
+            </span>
+            <span class="dc-detail" matTooltip="Max Wind">
+              <mat-icon>air</mat-icon> {{ day.wind_speed_max?.toFixed(0) ?? '—' }}km/h
+            </span>
+            <span class="dc-detail" matTooltip="UV Index" [style.color]="uvColor(day.uv_index_max)">
+              <mat-icon>wb_iridescent</mat-icon> {{ day.uv_index_max?.toFixed(1) ?? '—' }}
+            </span>
+            <span class="dc-detail" matTooltip="Sunshine duration">
+              <mat-icon>wb_sunny</mat-icon> {{ formatDuration(day.sunshine_duration) }}
+            </span>
+          </div>
+          <div class="dc-sun">
+            <span matTooltip="Sunrise">🌅 {{ formatTime(day.sunrise) }}</span>
+            <span matTooltip="Sunset">🌇 {{ formatTime(day.sunset) }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ SOIL & ATMOSPHERIC DATA ════════ -->
+    <section class="section" *ngIf="next24Hours.length > 0">
+      <h2 class="section-title">
+        <mat-icon>landscape</mat-icon>
+        Soil & Atmospheric Conditions (Current Hour)
+      </h2>
+      <div class="details-grid">
+        <div class="detail-card" *ngIf="next24Hours[0]?.dew_point !== null">
+          <mat-icon>dew_point</mat-icon>
+          <span class="detail-label">Dew Point</span>
+          <span class="detail-value">{{ convertTemp(next24Hours[0].dew_point) }}{{ tempSuffix() }}</span>
+        </div>
+        <div class="detail-card" *ngIf="next24Hours[0]?.visibility !== null">
+          <mat-icon>visibility</mat-icon>
+          <span class="detail-label">Visibility</span>
+          <span class="detail-value">{{ ((next24Hours[0].visibility ?? 0) / 1000).toFixed(1) }} km</span>
+        </div>
+        <div class="detail-card" *ngIf="next24Hours[0]?.snow_depth !== null">
+          <mat-icon>ac_unit</mat-icon>
+          <span class="detail-label">Snow Depth</span>
+          <span class="detail-value">{{ next24Hours[0].snow_depth?.toFixed(1) ?? '0' }} m</span>
+        </div>
+        <div class="detail-card cloud-layers" *ngIf="next24Hours[0]?.cloud_cover_low !== null">
+          <mat-icon>cloud</mat-icon>
+          <span class="detail-label">Cloud Layers</span>
+          <span class="detail-value">
+            Low {{ next24Hours[0].cloud_cover_low }}% ·
+            Mid {{ next24Hours[0].cloud_cover_mid }}% ·
+            High {{ next24Hours[0].cloud_cover_high }}%
+          </span>
+        </div>
+        <div class="detail-card" *ngIf="next24Hours[0]?.soil_temperature_0cm !== null">
+          <mat-icon>thermostat</mat-icon>
+          <span class="detail-label">Soil Temp (surface)</span>
+          <span class="detail-value">{{ convertTemp(next24Hours[0].soil_temperature_0cm) }}{{ tempSuffix() }}</span>
+        </div>
+        <div class="detail-card" *ngIf="next24Hours[0]?.soil_temperature_6cm !== null">
+          <mat-icon>thermostat</mat-icon>
+          <span class="detail-label">Soil Temp (6cm)</span>
+          <span class="detail-value">{{ convertTemp(next24Hours[0].soil_temperature_6cm) }}{{ tempSuffix() }}</span>
+        </div>
+        <div class="detail-card" *ngIf="next24Hours[0]?.soil_moisture_0_to_1cm !== null">
+          <mat-icon>water</mat-icon>
+          <span class="detail-label">Soil Moisture (0–1cm)</span>
+          <span class="detail-value">{{ next24Hours[0].soil_moisture_0_to_1cm?.toFixed(3) ?? '—' }} m³/m³</span>
+        </div>
+        <div class="detail-card" *ngIf="next24Hours[0]?.soil_moisture_1_to_3cm !== null">
+          <mat-icon>water</mat-icon>
+          <span class="detail-label">Soil Moisture (1–3cm)</span>
+          <span class="detail-value">{{ next24Hours[0].soil_moisture_1_to_3cm?.toFixed(3) ?? '—' }} m³/m³</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data attribution -->
+    <footer class="attribution">
+      Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a>
+      · ERA5 reanalysis &amp; ECMWF forecast models
+    </footer>
+
+  </ng-container>
+</div>

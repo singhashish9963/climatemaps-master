@@ -105,6 +105,7 @@ export const routes: Routes = [
   { path: 'climate-predictions', component: YearRangeGridComponent },
   { path: 'climate-matrix', component: ScenarioYearRangeGridComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'weather', loadComponent: () => import('./weather/weather-dashboard.component').then(m => m.WeatherDashboardComponent) },
   { path: 'stories', component: StoryModeComponent },
   // Climate variable routes for SEO - generated dynamically
   ...generateClimateVariableRoutes(),

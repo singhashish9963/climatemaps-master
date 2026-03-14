@@ -499,3 +499,251 @@
     max-width: 280px;
   }
 }
+
+/* ── Chart tab navigation ─────────────────────────────── */
+.chart-tabs {
+  display: flex;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.chart-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  background: #f5f5f5;
+  border: none;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &.active {
+    background: #1565c0;
+    color: white;
+  }
+
+  &:not(.active):hover {
+    background: #e8eaf6;
+    color: #1565c0;
+  }
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+  }
+}
+
+/* ── Section note (attribution line) ─────────────────── */
+.section-note {
+  font-size: 11px;
+  color: #999;
+  margin: 0 0 10px 0;
+
+  a {
+    color: #1565c0;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+/* ── Historical trends ────────────────────────────────── */
+.trend-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 8px;
+  color: #666;
+  font-size: 12px;
+}
+
+.trend-chart-card {
+  height: 270px !important;
+}
+
+/* ── Inline errors ────────────────────────────────────── */
+.inline-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #c62828;
+  font-size: 12px;
+  padding: 6px 0;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.small {
+    font-size: 11px;
+    padding: 2px 0;
+  }
+}
+
+/* ── 7-Day Forecast ───────────────────────────────────── */
+.forecast-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.forecast-location-block {
+  background: white;
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.forecast-loc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.forecast-city-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.forecast-days-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+
+  /* Thin, subtle scrollbar */
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+}
+
+.forecast-day-card {
+  min-width: 82px;
+  flex-shrink: 0;
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 8px 6px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: background 0.12s;
+
+  &:hover {
+    background: #eef2ff;
+  }
+}
+
+.fc-date {
+  font-size: 10px;
+  font-weight: 600;
+  color: #555;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.fc-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+  color: #1565c0;
+  margin: 2px 0;
+}
+
+.fc-desc {
+  font-size: 9px;
+  color: #888;
+  line-height: 1.1;
+  min-height: 11px;
+}
+
+.fc-temps {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.fc-high {
+  font-weight: 700;
+  color: #c62828;
+}
+
+.fc-sep {
+  color: #ccc;
+  font-size: 10px;
+}
+
+.fc-low {
+  font-weight: 500;
+  color: #1565c0;
+}
+
+.fc-precip {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  font-size: 9px;
+  color: #1565c0;
+  min-height: 14px;
+  margin-top: 2px;
+}
+
+.fc-precip-icon,
+.fc-snow-icon {
+  font-size: 10px;
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+}
+
+.fc-snow-icon {
+  color: #5c6bc0;
+}
+
+.fc-dry {
+  color: #ccc;
+  font-size: 9px;
+}
+
+.fc-wind {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  color: #777;
+  margin-top: 1px;
+}
+
+.fc-wind-icon {
+  font-size: 10px;
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  color: #90a4ae;
+}
+

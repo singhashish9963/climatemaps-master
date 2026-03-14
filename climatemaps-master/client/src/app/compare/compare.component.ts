@@ -71,6 +71,11 @@ import {
 import { TemperatureUtils } from '../utils/temperature-utils';
 import { PrecipitationUtils } from '../utils/precipitation-utils';
 import { MonthSliderComponent } from '../map/controls/sliders/month-slider.component';
+import {
+  OpenMeteoService,
+  TimeseriesResponse,
+  ForecastResponse,
+} from '../core/open-meteo.service';
 
 Chart.register(...registerables);
 
@@ -129,6 +134,17 @@ export class CompareComponent implements OnInit, OnDestroy {
   private markerA: Marker | null = null;
   private markerB: Marker | null = null;
   private chart: Chart | null = null;
+  private trendChart: Chart | null = null;
+
+  // Trend chart canvas (inside *ngIf — use setter pattern like monthly chart)
+  private _trendChartCanvas: ElementRef<HTMLCanvasElement> | null = null;
+  @ViewChild('trendChartCanvas', { static: false })
+  set trendChartCanvas(el: ElementRef<HTMLCanvasElement>) {
+    this._trendChartCanvas = el ?? null;
+    if (el && this.trendDataA && this.trendDataB) {
+      this._zone.run(() => setTimeout(() => this.renderTrendChart(), 0));
+    }
+  }
 
   // Globe (Cesium) state
   @ViewChild('globeContainer', { static: false })
@@ -141,6 +157,25 @@ export class CompareComponent implements OnInit, OnDestroy {
   viewMode: 'map' | 'globe' = 'map';
   activeMarker: 'A' | 'B' = 'A';
   showBottomBar = true;
+
+  // ─── Tab state ─────────────────────────────────────────────────────────────
+  selectedTab: 'monthly' | 'trends' | 'forecast' = 'monthly';
+
+  // Trend data (Historical — loaded lazily when Trends tab is first shown)
+  trendDataA: TimeseriesResponse | null = null;
+  trendDataB: TimeseriesResponse | null = null;
+  isLoadingTrendA = false;
+  isLoadingTrendB = false;
+  trendErrorA: string | null = null;
+  trendErrorB: string | null = null;
+
+  // Forecast data (loaded lazily when Forecast tab is first shown)
+  forecastDataA: ForecastResponse | null = null;
+  forecastDataB: ForecastResponse | null = null;
+  isLoadingForecastA = false;
+  isLoadingForecastB = false;
+  forecastErrorA: string | null = null;
+  forecastErrorB: string | null = null;
 
   locationA: LocationState | null = null;
   locationB: LocationState | null = null;
@@ -189,6 +224,7 @@ export class CompareComponent implements OnInit, OnDestroy {
     private geocodingService: GeocodingService,
     private temperatureUnitService: TemperatureUnitService,
     private precipitationUnitService: PrecipitationUnitService,
+    private openMeteoService: OpenMeteoService,
     private cdr: ChangeDetectorRef,
     private _zone: NgZone,
   ) {}
@@ -227,6 +263,9 @@ export class CompareComponent implements OnInit, OnDestroy {
         if (this.dataA.monthlyData && this.dataB.monthlyData) {
           this.renderChart();
         }
+        if (this.selectedTab === 'trends' && this.trendDataA && this.trendDataB) {
+          setTimeout(() => this.renderTrendChart(), 0);
+        }
       }),
     );
 
@@ -242,6 +281,7 @@ export class CompareComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.destroyChart();
+    this.destroyTrendChart();
     this.destroyGlobe();
   }
 
@@ -315,6 +355,11 @@ export class CompareComponent implements OnInit, OnDestroy {
       this.searchControlA.setValue('', { emitEvent: false });
     }
     this.loadData('A', updateSearch);
+    // Reset live data so it reloads for the new location
+    this.trendDataA = null; this.trendErrorA = null;
+    this.forecastDataA = null; this.forecastErrorA = null;
+    if (this.selectedTab === 'trends') this.loadTrendData('A');
+    else if (this.selectedTab === 'forecast') this.loadForecastData('A');
   }
 
   private setLocationB(lat: number, lon: number, updateSearch = false): void {
@@ -325,6 +370,11 @@ export class CompareComponent implements OnInit, OnDestroy {
       this.searchControlB.setValue('', { emitEvent: false });
     }
     this.loadData('B', updateSearch);
+    // Reset live data so it reloads for the new location
+    this.trendDataB = null; this.trendErrorB = null;
+    this.forecastDataB = null; this.forecastErrorB = null;
+    if (this.selectedTab === 'trends') this.loadTrendData('B');
+    else if (this.selectedTab === 'forecast') this.loadForecastData('B');
   }
 
   private placeMarker(which: 'A' | 'B', lat: number, lon: number, tooltipText?: string): void {
@@ -520,6 +570,174 @@ export class CompareComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  // ─── Tab switching & live data loading ──────────────────────────────────────
+
+  switchTab(tab: 'monthly' | 'trends' | 'forecast'): void {
+    this.selectedTab = tab;
+    if (tab === 'trends') {
+      if (this.locationA && !this.trendDataA && !this.isLoadingTrendA) this.loadTrendData('A');
+      if (this.locationB && !this.trendDataB && !this.isLoadingTrendB) this.loadTrendData('B');
+    } else if (tab === 'forecast') {
+      if (this.locationA && !this.forecastDataA && !this.isLoadingForecastA) this.loadForecastData('A');
+      if (this.locationB && !this.forecastDataB && !this.isLoadingForecastB) this.loadForecastData('B');
+    }
+  }
+
+  private loadTrendData(which: 'A' | 'B'): void {
+    const location = which === 'A' ? this.locationA : this.locationB;
+    if (!location) return;
+    if (which === 'A') { this.isLoadingTrendA = true; this.trendErrorA = null; }
+    else { this.isLoadingTrendB = true; this.trendErrorB = null; }
+
+    this.subscriptions.add(
+      this.openMeteoService.getTimeSeries(location.lat, location.lon).subscribe({
+        next: (data) => {
+          if (which === 'A') { this.trendDataA = data; this.isLoadingTrendA = false; }
+          else { this.trendDataB = data; this.isLoadingTrendB = false; }
+          this.cdr.detectChanges();
+          if (this.trendDataA && this.trendDataB) setTimeout(() => this.renderTrendChart(), 50);
+        },
+        error: (err) => {
+          const msg = err.error?.detail ?? 'Failed to load historical data';
+          if (which === 'A') { this.isLoadingTrendA = false; this.trendErrorA = msg; }
+          else { this.isLoadingTrendB = false; this.trendErrorB = msg; }
+          this.cdr.detectChanges();
+        },
+      }),
+    );
+  }
+
+  private loadForecastData(which: 'A' | 'B'): void {
+    const location = which === 'A' ? this.locationA : this.locationB;
+    if (!location) return;
+    if (which === 'A') { this.isLoadingForecastA = true; this.forecastErrorA = null; }
+    else { this.isLoadingForecastB = true; this.forecastErrorB = null; }
+
+    this.subscriptions.add(
+      this.openMeteoService.getForecast(location.lat, location.lon).subscribe({
+        next: (data) => {
+          if (which === 'A') { this.forecastDataA = data; this.isLoadingForecastA = false; }
+          else { this.forecastDataB = data; this.isLoadingForecastB = false; }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          const msg = err.error?.detail ?? 'Failed to load forecast';
+          if (which === 'A') { this.isLoadingForecastA = false; this.forecastErrorA = msg; }
+          else { this.isLoadingForecastB = false; this.forecastErrorB = msg; }
+          this.cdr.detectChanges();
+        },
+      }),
+    );
+  }
+
+  private renderTrendChart(): void {
+    if (!this._trendChartCanvas?.nativeElement || !this.trendDataA || !this.trendDataB) return;
+    this.destroyTrendChart();
+
+    const nameA = this.locationA?.cityName || 'Location A';
+    const nameB = this.locationB?.cityName || 'Location B';
+    const tempUnit = this.currentTempUnit;
+    const convertTemp = (v: number | null) =>
+      v === null ? null
+        : tempUnit === TemperatureUnit.FAHRENHEIT ? TemperatureUtils.celsiusToFahrenheit(v) : v;
+
+    const allYears = [
+      ...new Set([
+        ...this.trendDataA.trends.map((t) => t.year),
+        ...this.trendDataB.trends.map((t) => t.year),
+      ]),
+    ].sort((a, b) => a - b);
+
+    const getVal = (trends: TimeseriesResponse['trends'], year: number, key: keyof TimeseriesResponse['trends'][0]): number | null =>
+      (trends.find((t) => t.year === year)?.[key] ?? null) as number | null;
+
+    const tmaxA = allYears.map((y) => convertTemp(getVal(this.trendDataA!.trends, y, 'temp_max_avg')));
+    const tminA = allYears.map((y) => convertTemp(getVal(this.trendDataA!.trends, y, 'temp_min_avg')));
+    const tmaxB = allYears.map((y) => convertTemp(getVal(this.trendDataB!.trends, y, 'temp_max_avg')));
+    const tminB = allYears.map((y) => convertTemp(getVal(this.trendDataB!.trends, y, 'temp_min_avg')));
+    const precipA = allYears.map((y) => getVal(this.trendDataA!.trends, y, 'precip_total'));
+    const precipB = allYears.map((y) => getVal(this.trendDataB!.trends, y, 'precip_total'));
+
+    const config: ChartConfiguration = {
+      type: 'line',
+      data: {
+        labels: allYears,
+        datasets: [
+          { label: `Tmax – ${nameA}`, data: tmaxA as number[], borderColor: 'rgb(21,101,192)', tension: 0.3, yAxisID: 'y', pointRadius: 0, borderWidth: 2 },
+          { label: `Tmin – ${nameA}`, data: tminA as number[], borderColor: 'rgba(21,101,192,0.5)', tension: 0.3, yAxisID: 'y', pointRadius: 0, borderDash: [4, 4], borderWidth: 1.5 },
+          { label: `Tmax – ${nameB}`, data: tmaxB as number[], borderColor: 'rgb(230,81,0)', tension: 0.3, yAxisID: 'y', pointRadius: 0, borderWidth: 2 },
+          { label: `Tmin – ${nameB}`, data: tminB as number[], borderColor: 'rgba(230,81,0,0.5)', tension: 0.3, yAxisID: 'y', pointRadius: 0, borderDash: [4, 4], borderWidth: 1.5 },
+          { type: 'bar', label: `Precip – ${nameA}`, data: precipA as number[], backgroundColor: 'rgba(21,101,192,0.18)', yAxisID: 'y1', order: 2 } as any,
+          { type: 'bar', label: `Precip – ${nameB}`, data: precipB as number[], backgroundColor: 'rgba(230,81,0,0.18)', yAxisID: 'y1', order: 2 } as any,
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: true, position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(1)}` } },
+        },
+        scales: {
+          y: { title: { display: true, text: `Temp (${tempUnit})` }, position: 'left' },
+          y1: { title: { display: true, text: 'Annual Precip (mm)' }, position: 'right', grid: { drawOnChartArea: false } },
+        },
+      },
+    };
+
+    this.trendChart = new Chart(this._trendChartCanvas!.nativeElement, config);
+  }
+
+  private destroyTrendChart(): void {
+    if (this.trendChart) {
+      this.trendChart.destroy();
+      this.trendChart = null;
+    }
+  }
+
+  // ─── Forecast display helpers ─────────────────────────────────────────────
+
+  getWeatherIcon(code: number | null): string {
+    if (code === null) return 'cloud';
+    if (code === 0) return 'wb_sunny';
+    if (code <= 3) return 'partly_cloudy_day';
+    if (code <= 48) return 'foggy';
+    if (code <= 57) return 'grain';
+    if (code <= 67) return 'water';
+    if (code <= 77) return 'ac_unit';
+    if (code <= 82) return 'water';
+    if (code <= 86) return 'ac_unit';
+    return 'thunderstorm';
+  }
+
+  getWeatherDesc(code: number | null): string {
+    if (code === null) return '';
+    if (code === 0) return 'Clear';
+    if (code <= 3) return 'Partly cloudy';
+    if (code <= 48) return 'Foggy';
+    if (code <= 57) return 'Drizzle';
+    if (code <= 67) return 'Rain';
+    if (code <= 77) return 'Snow';
+    if (code <= 82) return 'Showers';
+    if (code <= 86) return 'Snow showers';
+    return 'Thunderstorm';
+  }
+
+  formatForecastDate(dateStr: string): string {
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  formatForecastTemp(val: number | null): string {
+    if (val === null) return '—';
+    const v =
+      this.currentTempUnit === TemperatureUnit.FAHRENHEIT
+        ? TemperatureUtils.celsiusToFahrenheit(val)
+        : val;
+    return `${v.toFixed(0)}°`;
   }
 
   private getDataType(variable: ClimateVarKey): string {

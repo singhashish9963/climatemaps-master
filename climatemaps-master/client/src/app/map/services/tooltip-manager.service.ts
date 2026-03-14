@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { CircleMarker, Map, Tooltip } from 'leaflet';
+import { CircleMarker, Map, Popup, Tooltip } from 'leaflet';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TooltipManagerService {
   private hoverTooltips = new WeakMap<Map, Tooltip>();
-  private clickTooltips = new WeakMap<Map, Tooltip>();
+  private clickPopups = new WeakMap<Map, Popup>();
   private clickMarkers = new WeakMap<Map, CircleMarker>();
 
   private createTooltip(
@@ -57,15 +57,34 @@ export class TooltipManagerService {
     marker.addTo(map);
     this.clickMarkers.set(map, marker);
 
-    const tooltip = this.createTooltip(content, latlng, map, true);
-    this.clickTooltips.set(map, tooltip);
+    const popup = new Popup({
+      className: 'weather-popup',
+      closeButton: true,
+      autoClose: false,
+      closeOnClick: false,
+      maxWidth: 320,
+      minWidth: 260,
+      offset: [0, -6],
+    });
+    popup.setLatLng(latlng);
+    popup.setContent(content);
+    popup.addTo(map);
+    this.clickPopups.set(map, popup);
+  }
+
+  updatePersistentTooltipContent(content: string, map: Map): void {
+    const popup = this.clickPopups.get(map);
+    if (popup) {
+      popup.setContent(content);
+      popup.update();
+    }
   }
 
   removeClickTooltip(map: Map): void {
-    const tooltip = this.clickTooltips.get(map);
-    if (tooltip) {
-      map.removeLayer(tooltip);
-      this.clickTooltips.delete(map);
+    const popup = this.clickPopups.get(map);
+    if (popup) {
+      map.removeLayer(popup);
+      this.clickPopups.delete(map);
     }
     const marker = this.clickMarkers.get(map);
     if (marker) {

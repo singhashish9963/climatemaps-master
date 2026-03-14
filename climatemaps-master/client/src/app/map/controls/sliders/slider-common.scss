@@ -1,40 +1,117 @@
 @import "../../../../styles/variables";
 
-// Shared styles for slider components
+// ── Host ──────────────────────────────────────────────────────
 :host {
   display: block;
   height: $bottom-controls-height;
+  padding: 4px 0 0;
 }
 
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--slider-label);
+// ── Angular Material MDC slider overrides ─────────────────────
+::ng-deep .mat-mdc-slider {
+  width: 100%;
 
-  span {
-    /* ensure text centers under each tick */
-    width: 0;
-    flex-grow: 1;
-    text-align: center;
+  // Active (filled) track
+  .mdc-slider__track--active_fill {
+    border-color: #4f46e5 !important;
+  }
+
+  // Inactive track
+  .mdc-slider__track--inactive {
+    background-color: #e2e8f0 !important;
+    opacity: 1 !important;
+  }
+
+  // Thumb knob
+  .mdc-slider__thumb-knob {
+    background-color: #4f46e5 !important;
+    border-color: #4f46e5 !important;
+    box-shadow: 0 1px 4px rgba(79, 70, 229, 0.35) !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-width: 2px !important;
+  }
+
+  // Focus/hover ripple
+  .mdc-slider__thumb--focused .mdc-slider__thumb-knob,
+  .mat-mdc-slider:not(.mdc-slider--disabled) .mdc-slider__thumb:hover .mdc-slider__thumb-knob {
+    box-shadow: 0 0 0 8px rgba(79, 70, 229, 0.1) !important;
+  }
+
+  // Tick marks
+  .mdc-slider__tick-mark--active {
+    background-color: rgba(255, 255, 255, 0.55) !important;
+  }
+
+  .mdc-slider__tick-mark--inactive {
+    background-color: rgba(79, 70, 229, 0.22) !important;
+  }
+
+  // Value bubble / tooltip
+  .mdc-slider__value-indicator {
+    background-color: #4f46e5 !important;
+    border-radius: 6px !important;
+    padding: 2px 8px !important;
+  }
+
+  .mdc-slider__value-indicator::before {
+    border-top-color: #4f46e5 !important;
+  }
+
+  .mdc-slider__value-indicator-text {
+    color: #ffffff !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  // Disabled state
+  &.mdc-slider--disabled {
+    .mdc-slider__track--active_fill {
+      border-color: #cbd5e1 !important;
+    }
+    .mdc-slider__thumb-knob {
+      background-color: #cbd5e1 !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: none !important;
+    }
   }
 }
 
+// Slider element itself
 mat-slider {
   margin-left: 10%;
   margin-right: 10%;
   display: flex;
 }
 
-// Month slider specific margins for 12 months
+// Month slider: tighter margins for 12 ticks
 :host(.month-slider) mat-slider {
   margin-left: calc(100% / 24);
   margin-right: calc(100% / 24);
 }
 
-// Hide sliders in mobile sidebar (tune menu)
+// ── Labels row below slider ───────────────────────────────────
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 0 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.6875rem; // 11px
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #64748b;
+
+  span {
+    width: 0;
+    flex-grow: 1;
+    text-align: center;
+    line-height: 1;
+  }
+}
+
+// Hide in mobile sidebar (tune menu)
 :host-context(.sidebar-content) {
   display: none !important;
 }

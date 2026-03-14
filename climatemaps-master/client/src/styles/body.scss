@@ -5,8 +5,7 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: var(--bg-primary);
+  font-family: var(--font-sans, 'Inter', 'Helvetica Neue', sans-serif);
+  background-color: var(--bg-base);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
 }

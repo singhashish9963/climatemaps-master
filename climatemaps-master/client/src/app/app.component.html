@@ -1,81 +1,127 @@
-<mat-toolbar *ngIf="!isMobile">
-  <a routerLink="/" class="app-title-link">
-    <span>{{ title }}</span>
-  </a>
+<!-- ── Navbar ─────────────────────────────────────────────────── -->
+<nav class="app-nav">
+  <div class="nav-inner">
 
-  <a mat-button routerLink="/">Map</a>
-  <a mat-button routerLink="/globe">Globe</a>
-  <a mat-button routerLink="/compare">Compare</a>
-  <a mat-button routerLink="/seasons">Seasons</a>
-  <a mat-button routerLink="/climate-predictions">Climate Predictions</a>
-  <a mat-button routerLink="/climate-scenarios">Climate Scenarios</a>
-  <a mat-button routerLink="/climate-matrix">Climate Matrix</a>
-  <a mat-button routerLink="/stories">Stories</a>
-  <a mat-button routerLink="/upload" class="upload-tab">
-    <mat-icon class="tab-icon">cloud_upload</mat-icon>
-    Upload
-  </a>
-  <a mat-button routerLink="/compare-nc" class="upload-tab">
-    <mat-icon class="tab-icon">compare_arrows</mat-icon>
-    Compare NC
-  </a>
+    <!-- Brand -->
+    <a routerLink="/" class="nav-brand">{{ title }}</a>
 
-  <span class="spacer"></span>
-
-  <a mat-button routerLink="/about">About</a>
-  <a
-    mat-icon-button
-    href="https://github.com/bartromgens/climatemaps"
-    target="_blank"
-    aria-label="GitHub"
-  >
-    <mat-icon svgIcon="github"></mat-icon>
-  </a>
-  <button
-    mat-icon-button
-    (click)="themeService.toggle()"
-    [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-    class="theme-toggle-button"
-  >
-    <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-  </button>
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="settingsMenu"
-    aria-label="Settings"
-    class="settings-button"
-  >
-    <mat-icon>settings</mat-icon>
-  </button>
-
-  <mat-menu #settingsMenu="matMenu">
-    <div
-      class="settings-menu-content"
-      (click)="$event.stopPropagation()"
-      (keydown)="$event.stopPropagation()"
-      tabindex="0"
-    >
-      <div class="settings-section">
-        <span class="settings-label">Temperature Unit</span>
-        <app-temperature-unit-selector></app-temperature-unit-selector>
-      </div>
-      <div class="settings-section">
-        <span class="settings-label">Precipitation Unit</span>
-        <app-precipitation-unit-selector></app-precipitation-unit-selector>
-      </div>
-      <div class="settings-section">
-        <span class="settings-label">Theme</span>
-        <button
-          mat-button
-          (click)="themeService.toggle()"
-          class="theme-menu-button"
-        >
-          <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-          {{ themeService.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}
-        </button>
-      </div>
+    <!-- Desktop: scrollable nav links -->
+    <div class="nav-links" *ngIf="!isMobile">
+      <a class="nav-link" routerLink="/"
+         routerLinkActive="nav-link--active"
+         [routerLinkActiveOptions]="{exact: true}">Map</a>
+      <a class="nav-link" routerLink="/globe"
+         routerLinkActive="nav-link--active">Globe</a>
+      <a class="nav-link" routerLink="/compare"
+         routerLinkActive="nav-link--active">Compare</a>
+      <a class="nav-link" routerLink="/seasons"
+         routerLinkActive="nav-link--active">Seasons</a>
+      <a class="nav-link" routerLink="/climate-predictions"
+         routerLinkActive="nav-link--active">Predictions</a>
+      <a class="nav-link" routerLink="/climate-scenarios"
+         routerLinkActive="nav-link--active">Scenarios</a>
+      <a class="nav-link" routerLink="/climate-matrix"
+         routerLinkActive="nav-link--active">Matrix</a>
+      <a class="nav-link" routerLink="/stories"
+         routerLinkActive="nav-link--active">Stories</a>
+      <span class="nav-sep"></span>
+      <a class="nav-link nav-link--tool" routerLink="/upload"
+         routerLinkActive="nav-link--active">
+        <mat-icon class="nav-icon-xs">cloud_upload</mat-icon>Upload
+      </a>
+      <a class="nav-link nav-link--tool" routerLink="/compare-nc"
+         routerLinkActive="nav-link--active">
+        <mat-icon class="nav-icon-xs">compare_arrows</mat-icon>Compare&nbsp;NC
+      </a>
     </div>
-  </mat-menu>
-</mat-toolbar>
+
+    <span class="nav-spacer"></span>
+
+    <!-- Desktop: right-side actions -->
+    <div class="nav-right" *ngIf="!isMobile">
+      <button class="nav-icon-btn"
+              (click)="themeService.toggle()"
+              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+        <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+      <button class="nav-icon-btn"
+              [matMenuTriggerFor]="settingsMenu"
+              aria-label="Open settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+
+    <!-- Mobile: hamburger -->
+    <button *ngIf="isMobile"
+            class="nav-icon-btn"
+            (click)="mobileMenuOpen = !mobileMenuOpen"
+            [attr.aria-label]="mobileMenuOpen ? 'Close menu' : 'Open menu'">
+      <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="mobile-drawer" *ngIf="isMobile && mobileMenuOpen">
+  <a class="mobile-nav-link" routerLink="/"
+     routerLinkActive="mobile-nav-link--active"
+     [routerLinkActiveOptions]="{exact: true}"
+     (click)="mobileMenuOpen = false">Map</a>
+  <a class="mobile-nav-link" routerLink="/globe"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Globe</a>
+  <a class="mobile-nav-link" routerLink="/compare"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Compare</a>
+  <a class="mobile-nav-link" routerLink="/seasons"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Seasons</a>
+  <a class="mobile-nav-link" routerLink="/climate-predictions"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Climate Predictions</a>
+  <a class="mobile-nav-link" routerLink="/climate-scenarios"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Climate Scenarios</a>
+  <a class="mobile-nav-link" routerLink="/climate-matrix"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Climate Matrix</a>
+  <a class="mobile-nav-link" routerLink="/stories"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Stories</a>
+  <div class="mobile-sep"></div>
+  <a class="mobile-nav-link" routerLink="/upload"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Upload</a>
+  <a class="mobile-nav-link" routerLink="/compare-nc"
+     routerLinkActive="mobile-nav-link--active"
+     (click)="mobileMenuOpen = false">Compare NC</a>
+  <div class="mobile-actions">
+    <button class="nav-icon-btn" (click)="themeService.toggle()">
+      <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+    <button class="nav-icon-btn" [matMenuTriggerFor]="settingsMenu" aria-label="Settings">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </div>
+</div>
 
 <router-outlet></router-outlet>
+
+<!-- ── Settings menu ─────────────────────────────────────────── -->
+<mat-menu #settingsMenu="matMenu">
+  <div class="settings-panel"
+       (click)="$event.stopPropagation()"
+       (keydown)="$event.stopPropagation()"
+       tabindex="0">
+    <p class="settings-label">Temperature Unit</p>
+    <app-temperature-unit-selector></app-temperature-unit-selector>
+    <p class="settings-label">Precipitation Unit</p>
+    <app-precipitation-unit-selector></app-precipitation-unit-selector>
+    <p class="settings-label">Theme</p>
+    <button class="settings-theme-btn" (click)="themeService.toggle()">
+      <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      {{ themeService.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+    </button>
+  </div>
+</mat-menu>

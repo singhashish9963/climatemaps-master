@@ -1,0 +1,237 @@
+// ══════════════════════════════════════════
+// ClimateGO — Reusable Component Classes
+// ══════════════════════════════════════════
+
+// ─── Buttons ───
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 16px;
+  height: 36px;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease, border-color 150ms ease, transform 100ms ease;
+  white-space: nowrap;
+  outline: none;
+
+  &:active { transform: scale(0.97); }
+  &:focus-visible { box-shadow: var(--shadow-focus); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+}
+
+.btn-primary {
+  @extend .btn;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+
+  &:hover { background: #4f46e5; border-color: #4f46e5; box-shadow: var(--shadow-md); }
+}
+
+.btn-secondary {
+  @extend .btn;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+
+  &:hover { background: var(--bg-surface); box-shadow: var(--shadow-sm); }
+}
+
+.btn-ghost {
+  @extend .btn;
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+
+  &:hover { background: var(--bg-elevated); color: var(--text-primary); }
+}
+
+.btn-destructive {
+  @extend .btn;
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+
+  &:hover { background: #b91c1c; box-shadow: var(--shadow-md); }
+}
+
+.btn-icon {
+  @extend .btn;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+
+  &:hover { background: var(--bg-surface); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+}
+
+.btn-sm {
+  height: 28px;
+  padding: 0 12px;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+
+// ─── Cards ───
+
+.card {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-default);
+  }
+}
+
+.card-body {
+  padding: var(--space-6);
+}
+
+.card-header {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+// ─── Inputs ───
+
+.input {
+  display: block;
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: var(--text-muted); }
+  &:hover { border-color: var(--border-default); }
+  &:focus { border-color: #818cf8; box-shadow: var(--shadow-focus); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; background: var(--bg-surface); }
+}
+
+.select {
+  @extend .input;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+// ─── Badges ───
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-indigo {
+  @extend .badge;
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.badge-cyan {
+  @extend .badge;
+  background: #ecfeff;
+  color: #0891b2;
+}
+
+.badge-green {
+  @extend .badge;
+  background: #f0fdf4;
+  color: var(--success);
+}
+
+.badge-red {
+  @extend .badge;
+  background: #fef2f2;
+  color: var(--danger);
+}
+
+.badge-slate {
+  @extend .badge;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+// ─── Skeleton ───
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+// ─── Section labels ───
+
+.section-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+
+// ─── Divider ───
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-subtle);
+  margin: var(--space-4) 0;
+}
+
+// ─── Entrance animation ───
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 300ms ease forwards;
+}
+
+@for $i from 1 through 8 {
+  .fade-in-up:nth-child(#{$i}) {
+    animation-delay: #{($i - 1) * 60}ms;
+  }
+}

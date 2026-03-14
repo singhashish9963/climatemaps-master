@@ -1,26 +1,31 @@
-@import "../../styles/variables";
+﻿@import "../../styles/variables";
 
-$panel-header-height: 40px;
-$control-bar-height: 48px;
+$accent:    #4f46e5;
+$panel-a:   #4f46e5;   // indigo
+$panel-b:   #0891b2;   // cyan-600
+$success:   #16a34a;
+$danger:    #dc2626;
+$bar-h:     48px;
+$hdr-h:     40px;
 
 .compare-nc-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px);
+  height: calc(100vh - #{$navbar-height});
   overflow: hidden;
-  background: var(--bg-surface, #f5f5f5);
+  background: #f1f5f9;
 }
 
-// ── Control bar ──────────────────────────────────────────────────────────────
+// â”€â”€ Control bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .control-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: $control-bar-height;
+  height: $bar-h;
   padding: 0 16px;
-  background: var(--bg-sidebar, #fafafa);
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
   gap: 12px;
   flex-shrink: 0;
 }
@@ -31,16 +36,16 @@ $control-bar-height: 48px;
   gap: 8px;
 
   .bar-icon {
-    color: #1976d2;
-    font-size: 22px;
-    height: 22px;
-    width: 22px;
+    color: $accent;
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
   }
 
   .bar-title {
-    font-size: 15px;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--text-primary, #212121);
+    color: #0f172a;
     white-space: nowrap;
   }
 }
@@ -56,7 +61,7 @@ $control-bar-height: 48px;
     }
 
     .toggle-label {
-      font-size: 12px;
+      font-size: 0.75rem;
       margin-left: 4px;
     }
   }
@@ -67,8 +72,8 @@ $control-bar-height: 48px;
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
-    color: var(--text-secondary, #666);
+    font-size: 0.75rem;
+    color: #64748b;
     white-space: nowrap;
   }
 
@@ -80,10 +85,11 @@ $control-bar-height: 48px;
     min-width: 32px;
     text-align: right;
     font-weight: 500;
+    color: #0f172a;
   }
 }
 
-// ── Panels container ─────────────────────────────────────────────────────────
+// â”€â”€ Panels container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .panels-container {
   display: flex;
@@ -101,19 +107,19 @@ $control-bar-height: 48px;
 
 .panel-divider {
   width: 3px;
-  background: var(--border-color, #e0e0e0);
+  background: #e2e8f0;
   flex-shrink: 0;
 }
 
-// ── Panel header ─────────────────────────────────────────────────────────────
+// â”€â”€ Panel header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .panel-header {
   display: flex;
   align-items: center;
-  height: $panel-header-height;
+  height: $hdr-h;
   padding: 0 12px;
-  background: var(--bg-sidebar, #fafafa);
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
   gap: 8px;
   flex-shrink: 0;
 }
@@ -122,27 +128,22 @@ $control-bar-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: white;
+  color: #ffffff;
   flex-shrink: 0;
 }
 
-.panel-a-label {
-  background: #1565c0;
-}
-
-.panel-b-label {
-  background: #e65100;
-}
+.panel-a-label { background: $panel-a; }
+.panel-b-label { background: $panel-b; }
 
 .panel-filename {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--text-primary, #333);
+  color: #0f172a;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -150,8 +151,8 @@ $control-bar-height: 48px;
 }
 
 .panel-placeholder {
-  font-size: 13px;
-  color: var(--text-secondary, #999);
+  font-size: 0.8125rem;
+  color: #94a3b8;
   font-style: italic;
   flex: 1;
 }
@@ -168,7 +169,7 @@ $control-bar-height: 48px;
   }
 }
 
-// ── Panel body ───────────────────────────────────────────────────────────────
+// â”€â”€ Panel body â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .panel-body {
   flex: 1;
@@ -178,7 +179,7 @@ $control-bar-height: 48px;
   overflow: hidden;
 }
 
-// ── Drop zone ────────────────────────────────────────────────────────────────
+// â”€â”€ Drop zone â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .drop-zone {
   flex: 1;
@@ -188,39 +189,38 @@ $control-bar-height: 48px;
   justify-content: center;
   gap: 12px;
   cursor: pointer;
-  background: var(--bg-dropzone, #fafafa);
-  transition: all 0.2s ease;
+  background: #f8fafc;
+  transition: border-color 0.15s, background 0.15s;
   margin: 16px;
-  border: 2px dashed #bdbdbd;
-  border-radius: 12px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
 
   &:hover {
-    border-color: #1976d2;
-    background: rgba(25, 118, 210, 0.04);
+    border-color: $accent;
+    background: #eef2ff;
   }
 
   &.drag-over {
-    border-color: #1976d2;
-    background: rgba(25, 118, 210, 0.1);
-    transform: scale(1.01);
+    border-color: $accent;
+    background: #eef2ff;
   }
 
   .drop-icon {
-    font-size: 48px;
-    height: 48px;
-    width: 48px;
-    color: #bdbdbd;
+    font-size: 44px;
+    height: 44px;
+    width: 44px;
+    color: #cbd5e1;
   }
 
   .drop-text {
-    font-size: 13px;
-    color: var(--text-secondary, #888);
+    font-size: 0.8125rem;
+    color: #64748b;
     text-align: center;
     line-height: 1.6;
   }
 }
 
-// ── Loading overlay ──────────────────────────────────────────────────────────
+// â”€â”€ Loading overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .loading-overlay {
   position: absolute;
@@ -230,13 +230,13 @@ $control-bar-height: 48px;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   z-index: 10;
-  font-size: 13px;
-  color: var(--text-secondary, #666);
+  font-size: 0.8125rem;
+  color: #64748b;
 }
 
-// ── Error ────────────────────────────────────────────────────────────────────
+// â”€â”€ Error â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .panel-error {
   display: flex;
@@ -244,11 +244,11 @@ $control-bar-height: 48px;
   gap: 6px;
   padding: 8px 12px;
   margin: 8px 12px 0;
-  background: #ffebee;
-  border: 1px solid #ef9a9a;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
   border-radius: 6px;
-  font-size: 12px;
-  color: #c62828;
+  font-size: 0.75rem;
+  color: $danger;
 
   mat-icon {
     font-size: 16px;
@@ -263,7 +263,7 @@ $control-bar-height: 48px;
   }
 }
 
-// ── Map / Globe wrappers ─────────────────────────────────────────────────────
+// â”€â”€ Map / Globe wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .map-wrapper {
   flex: 1;
@@ -289,7 +289,7 @@ $control-bar-height: 48px;
   margin: 0;
   border: none;
   border-radius: 0;
-  background: rgba(250, 250, 250, 0.85);
+  background: rgba(248, 250, 252, 0.88);
   z-index: 5;
 }
 
@@ -307,15 +307,15 @@ $control-bar-height: 48px;
   overflow: hidden;
 }
 
-// ── Stats bar ────────────────────────────────────────────────────────────────
+// â”€â”€ Stats bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .stats-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
   padding: 6px 10px;
-  background: var(--bg-sidebar, #fafafa);
-  border-top: 1px solid var(--border-color, #e0e0e0);
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   flex-shrink: 0;
 }
 
@@ -323,41 +323,42 @@ $control-bar-height: 48px;
   display: flex;
   gap: 4px;
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: 0.6875rem;
 
   .stat-key {
-    color: var(--text-secondary, #888);
+    color: #94a3b8;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.04em;
   }
 
   .stat-val {
-    color: var(--text-primary, #333);
+    color: #0f172a;
     font-weight: 600;
   }
 }
 
-// ── Controls below stats ─────────────────────────────────────────────────────
+// â”€â”€ Variable controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 .var-controls {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 4px 10px;
-  background: var(--bg-sidebar, #fafafa);
-  border-top: 1px solid var(--border-color, #eee);
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
 
   label {
-    color: var(--text-secondary, #666);
+    color: #64748b;
     white-space: nowrap;
     min-width: 70px;
   }
 
   .var-select {
     flex: 1;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .time-slider {
@@ -368,7 +369,7 @@ $control-bar-height: 48px;
 .replace-btn {
   margin: 6px 10px;
   align-self: flex-start;
-  font-size: 12px;
+  font-size: 0.75rem;
   flex-shrink: 0;
 
   mat-icon {
@@ -379,7 +380,7 @@ $control-bar-height: 48px;
   }
 }
 
-// ── Cesium overrides ─────────────────────────────────────────────────────────
+// â”€â”€ Cesium overrides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 :host ::ng-deep {
   .cesium-container {
@@ -404,11 +405,11 @@ $control-bar-height: 48px;
   }
 }
 
-// ── Mobile ───────────────────────────────────────────────────────────────────
+// â”€â”€ Mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @media (max-width: 768px) {
   .compare-nc-page {
-    height: calc(100vh - 56px);
+    height: calc(100vh - #{$navbar-height});
   }
 
   .panels-container {

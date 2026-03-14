@@ -1,15 +1,12 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { TemperatureUnitSelectorComponent } from './core/temperature-unit-selector.component';
 import { PrecipitationUnitSelectorComponent } from './core/precipitation-unit-selector.component';
-import { LocationSearchComponent } from './core/location-search.component';
 import { ThemeService } from './core/theme.service';
 
 @Component({
@@ -19,13 +16,11 @@ import { ThemeService } from './core/theme.service';
     CommonModule,
     RouterOutlet,
     RouterLink,
-    MatToolbarModule,
-    MatButtonModule,
+    RouterLinkActive,
     MatIconModule,
     MatMenuModule,
     TemperatureUnitSelectorComponent,
     PrecipitationUnitSelectorComponent,
-    LocationSearchComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -33,6 +28,7 @@ import { ThemeService } from './core/theme.service';
 export class AppComponent implements OnInit {
   readonly title: string = 'ClimateGO';
   isMobile = false;
+  mobileMenuOpen = false;
 
   constructor(
     private matIconRegistry: MatIconRegistry,

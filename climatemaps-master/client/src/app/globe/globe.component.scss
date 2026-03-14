@@ -1,5 +1,7 @@
 @import "../../styles/variables";
 
+$accent: #4f46e5;
+
 :host {
   display: block;
   width: 100%;
@@ -13,8 +15,8 @@
 
 .globe-sidebar {
   width: 280px;
-  background: #fff;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
 
   .sidebar-content {
     padding: 8px;
@@ -39,16 +41,21 @@
   height: 100%;
 }
 
+// ── Floating icon buttons (toggle, nav) ───────────────────────────────────────
 .sidebar-toggle-button {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 1001;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px !important;
+  color: #475569 !important;
 
   &:hover {
-    background: #fff;
+    background: #f8fafc !important;
+    color: $accent !important;
   }
 }
 
@@ -63,14 +70,18 @@
   gap: 4px;
 
   .nav-button {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 8px !important;
+    color: #475569 !important;
     width: 36px;
     height: 36px;
     line-height: 36px;
 
     &:hover {
-      background: #fff;
+      background: #f8fafc !important;
+      color: $accent !important;
     }
 
     .mat-icon {
@@ -81,70 +92,75 @@
   }
 }
 
+// ── Loading overlay ───────────────────────────────────────────────────────────
 .loading-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
   padding: 24px 32px;
   border-radius: 12px;
   text-align: center;
   z-index: 1002;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 
   p {
     margin: 12px 0 0;
-    font-size: 14px;
-    color: #555;
+    font-size: 0.875rem;
+    color: #475569;
   }
 }
 
+// ── Globe info chip ───────────────────────────────────────────────────────────
 .globe-info-display {
   position: absolute;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.88);
-  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  padding: 5px 14px;
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   z-index: 1001;
   pointer-events: none;
 
   .info-value {
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 500;
-    color: #333;
+    color: #0f172a;
     white-space: nowrap;
   }
 
   .prediction-indicator {
-    color: #e65100;
+    color: #7c3aed;
     font-style: italic;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 
-// 3D bars loading indicator
+// ── 3D bars loading chip ──────────────────────────────────────────────────────
 .bars-loading-indicator {
   position: absolute;
   bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1002;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   gap: 10px;
 
   span {
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 500;
-    color: #555;
+    color: #475569;
     white-space: nowrap;
   }
 }
@@ -153,17 +169,18 @@
   margin-top: 4px;
 }
 
-// Click-to-query tooltip
+// ── Click-to-query tooltip ────────────────────────────────────────────────────
 .globe-click-tooltip {
   position: absolute;
   z-index: 1002;
-  background: rgba(255, 255, 255, 0.94);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 10px 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   pointer-events: auto;
   max-width: 220px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
 
   .tooltip-close {
     position: absolute;
@@ -172,49 +189,48 @@
     background: none;
     border: none;
     font-size: 18px;
-    color: #888;
+    color: #94a3b8;
     cursor: pointer;
     padding: 0 4px;
     line-height: 1;
 
     &:hover {
-      color: #333;
+      color: #475569;
     }
   }
 
   .tooltip-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: #222;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
     margin-bottom: 2px;
   }
 
   .tooltip-unit {
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 400;
-    color: #666;
+    color: #64748b;
   }
 
   .tooltip-city {
-    font-size: 12px;
-    color: #555;
+    font-size: 0.75rem;
+    color: #475569;
     margin-bottom: 1px;
   }
 
   .tooltip-coords {
-    font-size: 11px;
-    color: #999;
+    font-size: 0.6875rem;
+    color: #94a3b8;
   }
 }
 
-// Cesium overrides for clean look
+// ── Cesium overrides ──────────────────────────────────────────────────────────
 ::ng-deep {
   .cesium-viewer-container {
     .cesium-viewer {
       font-family: inherit;
     }
 
-    // Hide any leftover Cesium widgets
     .cesium-viewer-toolbar,
     .cesium-viewer-animationContainer,
     .cesium-viewer-timelineContainer,
@@ -236,7 +252,9 @@
     padding: 4px 12px;
 
     .info-value {
-      font-size: 11px;
+      font-size: 0.6875rem;
     }
   }
 }
+
+

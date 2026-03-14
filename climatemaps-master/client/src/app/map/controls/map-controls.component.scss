@@ -1,13 +1,85 @@
 .controls-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  align-items: flex-end;
+  gap: 10px;
+  align-items: flex-start;
 }
 
 .dropdown-field {
   min-width: 150px;
   flex: 1;
+
+  // ── MDC Outlined field overrides ──────────────────────────────
+  ::ng-deep .mdc-notched-outline__leading,
+  ::ng-deep .mdc-notched-outline__notch,
+  ::ng-deep .mdc-notched-outline__trailing {
+    border-color: #e2e8f0 !important;
+  }
+  ::ng-deep .mdc-notched-outline__leading { border-radius: 8px 0 0 8px !important; }
+  ::ng-deep .mdc-notched-outline__trailing { border-radius: 0 8px 8px 0 !important; }
+
+  // Focused outline
+  ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+  ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+  ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+    border-color: #4f46e5 !important;
+    border-width: 1.5px !important;
+  }
+
+  // Label
+  ::ng-deep .mat-mdc-floating-label {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+  }
+  ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+    color: #4f46e5 !important;
+  }
+
+  // Select value text
+  ::ng-deep .mat-mdc-select-value-text {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #0f172a !important;
+  }
+
+  // Arrow icon
+  ::ng-deep .mat-mdc-select-arrow svg {
+    fill: #64748b !important;
+  }
+  ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-select-arrow svg {
+    fill: #4f46e5 !important;
+  }
+
+  // Background
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    padding: 0 10px !important;
+  }
+
+  // Disabled state
+  ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--disabled {
+    background: #f1f5f9 !important;
+  }
+  ::ng-deep .mdc-text-field--disabled .mat-mdc-select-value-text {
+    color: #94a3b8 !important;
+  }
+  ::ng-deep .mdc-text-field--disabled .mdc-notched-outline__leading,
+  ::ng-deep .mdc-text-field--disabled .mdc-notched-outline__notch,
+  ::ng-deep .mdc-text-field--disabled .mdc-notched-outline__trailing {
+    border-color: #e2e8f0 !important;
+    border-style: dashed !important;
+  }
+
+  // Infix height
+  ::ng-deep .mat-mdc-form-field-infix {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    min-height: unset !important;
+  }
 }
 
 .checkbox-field {
@@ -41,15 +113,100 @@
   cursor: not-allowed;
 }
 
-// Sidebar-specific styling
+// ── Sidebar-specific layout ────────────────────────────────────
 :host-context(.sidebar-content) {
   .controls-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 0;
+    padding: 6px 12px;
+    margin-top: 12px;
+    margin-bottom: 12px;
   }
 
-  .dropdown-field,
+  .dropdown-field {
+    min-width: unset;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 2px;
+
+    // Compact outlined cards per field
+    ::ng-deep .mdc-notched-outline__leading,
+    ::ng-deep .mdc-notched-outline__notch,
+    ::ng-deep .mdc-notched-outline__trailing {
+      border-color: #e2e8f0 !important;
+    }
+    ::ng-deep .mdc-notched-outline__leading { border-radius: 8px 0 0 8px !important; }
+    ::ng-deep .mdc-notched-outline__trailing { border-radius: 0 8px 8px 0 !important; }
+
+    ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+    ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+    ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+      border-color: #4f46e5 !important;
+      border-width: 1.5px !important;
+    }
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      background: #f8fafc !important;
+      border-radius: 8px !important;
+      padding: 0 12px !important;
+      transition: background 0.15s;
+
+      &:hover {
+        background: #f1f5f9 !important;
+      }
+    }
+
+    // Disabled wrapper
+    ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--disabled {
+      background: #f8fafc !important;
+      opacity: 0.55;
+      &:hover { background: #f8fafc !important; }
+    }
+    ::ng-deep .mdc-text-field--disabled .mdc-notched-outline__leading,
+    ::ng-deep .mdc-text-field--disabled .mdc-notched-outline__notch,
+    ::ng-deep .mdc-text-field--disabled .mdc-notched-outline__trailing {
+      border-color: #e2e8f0 !important;
+      border-style: dashed !important;
+    }
+
+    // Label — left-aligned, small caps
+    ::ng-deep .mat-mdc-floating-label {
+      font-family: 'Inter', system-ui, sans-serif !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      color: #94a3b8 !important;
+    }
+    ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+      color: #4f46e5 !important;
+    }
+
+    // Value text — left-aligned
+    ::ng-deep .mat-mdc-select-value-text {
+      font-family: 'Inter', system-ui, sans-serif !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: #0f172a !important;
+    }
+
+    // Arrow
+    ::ng-deep .mat-mdc-select-arrow svg {
+      fill: #94a3b8 !important;
+    }
+    ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-select-arrow svg {
+      fill: #4f46e5 !important;
+    }
+
+    // Field infix
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+      min-height: unset !important;
+    }
+  }
+
   .checkbox-field {
     min-width: unset;
     width: 100%;

@@ -1,4 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+/* Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens */
+@import "styles/tokens";
+
+/* Legacy variables (kept for map/globe components) */
 @import "styles/variables";
 @import "styles/themes";
 @import "styles/body";
@@ -8,3 +16,13 @@
 @import "styles/spacing";
 @import "styles/toast";
 @import "styles/autocomplete";
+
+/* Reusable component classes */
+@import "styles/components";
+
+/* Global base overrides */
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+}

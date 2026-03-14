@@ -6,15 +6,21 @@
     class="custom-sidebar"
   >
     <div class="sidebar-content">
-      <!-- Close button inside sidebar -->
-      <button
-        mat-icon-button
-        class="sidebar-close-button"
-        (click)="toggleSidebar()"
-        [attr.aria-label]="'Close sidebar'"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
+      <!-- Sidebar header -->
+      <div class="sidebar-header">
+        <div class="sidebar-header-text">
+          <mat-icon class="sidebar-header-icon">tune</mat-icon>
+          <span class="sidebar-title">Controls</span>
+        </div>
+        <button
+          mat-icon-button
+          class="sidebar-close-button"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="'Close sidebar'"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
 
       <app-map-controls
         [controlsData]="controlsData"

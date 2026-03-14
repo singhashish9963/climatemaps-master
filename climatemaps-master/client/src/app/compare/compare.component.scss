@@ -1,7 +1,7 @@
 @import "../../styles/variables";
 
 .compare-page {
-  height: $page-height;
+  height: calc(100vh - $navbar-height);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -9,7 +9,7 @@
 
   @media (max-width: 768px) {
     height: auto;
-    min-height: $page-height;
+    min-height: calc(100vh - $navbar-height);
   }
 }
 

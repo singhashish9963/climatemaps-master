@@ -226,6 +226,21 @@ $accent: #4f46e5;
 
 // ── Cesium overrides ──────────────────────────────────────────────────────────
 ::ng-deep {
+  app-colorbar-json.globe-colorbar {
+    background: rgba(255, 255, 255, 0.82) !important;
+
+    .colorbar-tick-label,
+    .colorbar-label {
+      color: #0f172a !important;
+      font-weight: 600 !important;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.55);
+    }
+
+    .colorbar-tick-line {
+      background-color: #0f172a !important;
+    }
+  }
+
   .cesium-viewer-container {
     .cesium-viewer {
       font-family: inherit;

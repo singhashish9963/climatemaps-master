@@ -96,6 +96,13 @@
   }
 }
 
+// Desktop slider bar padding (matches map component)
+.desktop-controls-overlay {
+  padding: 0 28px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 // Common maps grid wrapper styling
 .maps-grid-wrapper {
   height: $page-height;

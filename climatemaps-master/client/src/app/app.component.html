@@ -16,8 +16,6 @@
          routerLinkActive="nav-link--active">Compare</a>
       <a class="nav-link" routerLink="/seasons"
          routerLinkActive="nav-link--active">Seasons</a>
-      <a class="nav-link" routerLink="/climate-predictions"
-         routerLinkActive="nav-link--active">Predictions</a>
       <a class="nav-link" routerLink="/climate-scenarios"
          routerLinkActive="nav-link--active">Scenarios</a>
       <a class="nav-link" routerLink="/climate-matrix"
@@ -39,11 +37,6 @@
 
     <!-- Desktop: right-side actions -->
     <div class="nav-right" *ngIf="!isMobile">
-      <button class="nav-icon-btn"
-              (click)="themeService.toggle()"
-              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
-        <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      </button>
       <button class="nav-icon-btn"
               [matMenuTriggerFor]="settingsMenu"
               aria-label="Open settings">
@@ -77,9 +70,6 @@
   <a class="mobile-nav-link" routerLink="/seasons"
      routerLinkActive="mobile-nav-link--active"
      (click)="mobileMenuOpen = false">Seasons</a>
-  <a class="mobile-nav-link" routerLink="/climate-predictions"
-     routerLinkActive="mobile-nav-link--active"
-     (click)="mobileMenuOpen = false">Climate Predictions</a>
   <a class="mobile-nav-link" routerLink="/climate-scenarios"
      routerLinkActive="mobile-nav-link--active"
      (click)="mobileMenuOpen = false">Climate Scenarios</a>
@@ -97,9 +87,6 @@
      routerLinkActive="mobile-nav-link--active"
      (click)="mobileMenuOpen = false">Compare NC</a>
   <div class="mobile-actions">
-    <button class="nav-icon-btn" (click)="themeService.toggle()">
-      <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-    </button>
     <button class="nav-icon-btn" [matMenuTriggerFor]="settingsMenu" aria-label="Settings">
       <mat-icon>settings</mat-icon>
     </button>
@@ -118,10 +105,6 @@
     <app-temperature-unit-selector></app-temperature-unit-selector>
     <p class="settings-label">Precipitation Unit</p>
     <app-precipitation-unit-selector></app-precipitation-unit-selector>
-    <p class="settings-label">Theme</p>
-    <button class="settings-theme-btn" (click)="themeService.toggle()">
-      <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      {{ themeService.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}
-    </button>
+
   </div>
 </mat-menu>

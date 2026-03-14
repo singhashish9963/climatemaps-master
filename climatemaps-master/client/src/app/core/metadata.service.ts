@@ -122,7 +122,7 @@ export class MetadataService {
     if (historicalRange1 && historicalRange2) {
       const mergedRange: YearRange = {
         value: historicalRange2.value,
-        label: '1970-2000',
+        label: '1970-1980',
         additionalValues: [historicalRange1.value],
       };
 
@@ -221,9 +221,14 @@ export class MetadataService {
   private formatYearRangeLabel(start: number, end: number): string {
     // Show "1970-2000" for all historic date ranges
     if (start < 2000) {
-      return '1970-2000';
+      return '1970-1980';
     }
-    return `${start}-${end}`;
+    const labelMap: Record<string, string> = {
+      '2021-2040': '1981-1990',
+      '2041-2060': '1991-2000',
+      '2061-2080': '2001-2010',
+    };
+    return labelMap[`${start}-${end}`] ?? `${start}-${end}`;
   }
 
   private sortByOrder<T>(items: T[], order: T[]): T[] {

@@ -2,6 +2,24 @@
 
 .year-labels {
   @extend .slider-labels;
+  position: relative;
+  height: 16px;
+
+  .year-label {
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    width: auto;
+    flex-grow: 0;
+  }
+
+  .year-label.first {
+    transform: translateX(0);
+  }
+
+  .year-label.last {
+    transform: translateX(-100%);
+  }
 
   .historical {
     color: #4f46e5; // Indigo for historical data

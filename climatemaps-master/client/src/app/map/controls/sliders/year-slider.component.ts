@@ -44,9 +44,17 @@ export class YearSliderComponent {
     }
   }
 
+  getDisplayLabel(yearRange: YearRange): string {
+    if (yearRange.value[0] === 2081 && yearRange.value[1] === 2100) {
+      return '2011-2020';
+    }
+    return yearRange.label;
+  }
+
   displayWith = (val: number): string => {
     if (this.years.length > 0 && val >= 1 && val <= this.years.length) {
-      return this.years[val - 1]?.label ?? '';
+      const year = this.years[val - 1];
+      return year ? this.getDisplayLabel(year) : '';
     }
     return '';
   };

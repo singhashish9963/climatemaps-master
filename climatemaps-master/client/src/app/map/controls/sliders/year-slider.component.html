@@ -16,8 +16,12 @@
 
 <div class="year-labels">
   <span
-    *ngFor="let year of years"
+    *ngFor="let year of years; let i = index"
+    class="year-label"
     [class.historical]="isHistoricalYearRange(year)"
     [class.prediction]="!isHistoricalYearRange(year)"
-  >{{ year.label }}</span>
+    [class.first]="i === 0"
+    [class.last]="i === years.length - 1"
+    [style.left.%]="years.length > 1 ? (i * 100) / (years.length - 1) : 50"
+  >{{ getDisplayLabel(year) }}</span>
 </div>

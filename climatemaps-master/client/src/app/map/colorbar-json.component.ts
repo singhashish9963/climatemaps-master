@@ -71,7 +71,7 @@ import { getClimateVarKeyFromDataType } from '../utils/enum';
     `
       :host {
         position: fixed;
-        bottom: 130px;
+        bottom: 320px;
         left: 6px;
         background: rgba(255, 255, 255, 0.4);
         border-radius: 8px;

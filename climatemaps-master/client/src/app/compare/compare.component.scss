@@ -112,16 +112,70 @@
   flex-shrink: 0;
 }
 
+/* ── View mode toggle ─────────────────────────────────── */
+.view-mode-toggle {
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  background: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  color: #777;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:not(:first-child) {
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  &.active {
+    background: #1565c0;
+    color: white;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+}
+
 /* ── Map ──────────────────────────────────────────────── */
 .map-container {
   position: relative;
   height: 280px;
   flex-shrink: 0;
+  transition: height 0.2s ease;
+
+  &.map-expanded {
+    flex: 1;
+    height: unset;
+  }
 }
 
 .leaflet-map {
   width: 100%;
   height: 100%;
+}
+
+.cesium-compare-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .marker-toggle-overlay {
@@ -192,6 +246,62 @@
 }
 
 /* ── Comparison section ───────────────────────────────── */
+.bottom-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 0 16px;
+  background: white;
+  border-top: 2px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  min-height: 36px;
+
+  &:hover {
+    background: #f5f7fa;
+  }
+}
+
+.bottom-bar-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  overflow: hidden;
+}
+
+.bottom-bar-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #1565c0;
+  flex-shrink: 0;
+}
+
+.bottom-bar-locations {
+  font-weight: 400;
+  color: #888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bottom-bar-chevron {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .comparison-section {
   flex: 1;
   overflow-y: auto;

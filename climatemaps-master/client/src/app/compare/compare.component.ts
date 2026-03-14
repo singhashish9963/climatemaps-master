@@ -7,6 +7,20 @@ import {
   ChangeDetectorRef,
   NgZone,
 } from '@angular/core';
+import {
+  Viewer,
+  Cartesian2,
+  Cartesian3,
+  Math as CesiumMath,
+  SceneMode,
+  Color,
+  EllipsoidTerrainProvider,
+  ScreenSpaceEventHandler,
+  ScreenSpaceEventType,
+  Cartographic,
+  defined,
+  Entity,
+} from 'cesium';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -116,7 +130,17 @@ export class CompareComponent implements OnInit, OnDestroy {
   private markerB: Marker | null = null;
   private chart: Chart | null = null;
 
+  // Globe (Cesium) state
+  @ViewChild('globeContainer', { static: false })
+  private globeContainerRef?: ElementRef<HTMLDivElement>;
+  private cesiumViewer: Viewer | null = null;
+  private cesiumHandler: ScreenSpaceEventHandler | null = null;
+  private cesiumEntityA: Entity | null = null;
+  private cesiumEntityB: Entity | null = null;
+
+  viewMode: 'map' | 'globe' = 'map';
   activeMarker: 'A' | 'B' = 'A';
+  showBottomBar = true;
 
   locationA: LocationState | null = null;
   locationB: LocationState | null = null;
@@ -218,6 +242,7 @@ export class CompareComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.destroyChart();
+    this.destroyGlobe();
   }
 
   private setupSearchControls(): void {
@@ -260,6 +285,15 @@ export class CompareComponent implements OnInit, OnDestroy {
 
   onMapReady(map: Map): void {
     this.leafletMap = map;
+    // Re-place markers when Leaflet map is re-created (e.g. after switching back from globe)
+    if (this.locationA) {
+      const lbl = this.locationA.cityName ? `📍 A: ${this.locationA.cityName}` : undefined;
+      this.placeMarker('A', this.locationA.lat, this.locationA.lon, lbl);
+    }
+    if (this.locationB) {
+      const lbl = this.locationB.cityName ? `📍 B: ${this.locationB.cityName}` : undefined;
+      this.placeMarker('B', this.locationB.lat, this.locationB.lon, lbl);
+    }
   }
 
   onMapClick(event: LeafletMouseEvent): void {
@@ -275,6 +309,7 @@ export class CompareComponent implements OnInit, OnDestroy {
   private setLocationA(lat: number, lon: number, updateSearch = false): void {
     this.locationA = { lat, lon, cityName: '' };
     this.placeMarker('A', lat, lon);
+    this.placeGlobeMarker('A', lat, lon);
     if (updateSearch) {
       // Clear search so we don't show stale previous query
       this.searchControlA.setValue('', { emitEvent: false });
@@ -285,15 +320,17 @@ export class CompareComponent implements OnInit, OnDestroy {
   private setLocationB(lat: number, lon: number, updateSearch = false): void {
     this.locationB = { lat, lon, cityName: '' };
     this.placeMarker('B', lat, lon);
+    this.placeGlobeMarker('B', lat, lon);
     if (updateSearch) {
       this.searchControlB.setValue('', { emitEvent: false });
     }
     this.loadData('B', updateSearch);
   }
 
-  private placeMarker(which: 'A' | 'B', lat: number, lon: number): void {
+  private placeMarker(which: 'A' | 'B', lat: number, lon: number, tooltipText?: string): void {
     if (!this.leafletMap) return;
     const color = which === 'A' ? '#1565c0' : '#e65100';
+    const initialTooltip = tooltipText ?? `📍 ${which}: Loading…`;
     const markerIcon: DivIcon = divIcon({
       className: '',
       html: `<div style="background:${color};color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);">${which}</div>`,
@@ -304,7 +341,7 @@ export class CompareComponent implements OnInit, OnDestroy {
     if (which === 'A') {
       if (this.markerA) this.leafletMap.removeLayer(this.markerA);
       this.markerA = marker([lat, lon], { icon: markerIcon, draggable: true })
-        .bindTooltip('📍 A: Loading…', {
+        .bindTooltip(initialTooltip, {
           permanent: true,
           direction: 'top',
           offset: [0, -18],
@@ -318,7 +355,7 @@ export class CompareComponent implements OnInit, OnDestroy {
     } else {
       if (this.markerB) this.leafletMap.removeLayer(this.markerB);
       this.markerB = marker([lat, lon], { icon: markerIcon, draggable: true })
-        .bindTooltip('📍 B: Loading…', {
+        .bindTooltip(initialTooltip, {
           permanent: true,
           direction: 'top',
           offset: [0, -18],
@@ -451,6 +488,7 @@ export class CompareComponent implements OnInit, OnDestroy {
           if (this.locationA) this.locationA.cityName = cityLabel;
           // Update the permanent tooltip on the map marker
           if (this.markerA) this.markerA.setTooltipContent(`📍 A: ${cityLabel}`);
+          this.placeGlobeMarker('A', location.lat, location.lon, cityLabel);
           // Populate the search box when placed by map click
           if (updateSearch) {
             this.searchControlA.setValue(cityLabel, { emitEvent: false });
@@ -459,6 +497,7 @@ export class CompareComponent implements OnInit, OnDestroy {
           this.dataB = newData;
           if (this.locationB) this.locationB.cityName = cityLabel;
           if (this.markerB) this.markerB.setTooltipContent(`📍 B: ${cityLabel}`);
+          this.placeGlobeMarker('B', location.lat, location.lon, cityLabel);
           if (updateSearch) {
             this.searchControlB.setValue(cityLabel, { emitEvent: false });
           }
@@ -656,5 +695,170 @@ export class CompareComponent implements OnInit, OnDestroy {
       this.chart.destroy();
       this.chart = null;
     }
+  }
+
+  // ─── View toggle ───────────────────────────────────────────────────────────
+
+  toggleBottomBar(): void {
+    this.showBottomBar = !this.showBottomBar;
+  }
+
+  switchView(mode: 'map' | 'globe'): void {
+    if (this.viewMode === mode) return;
+    this.viewMode = mode;
+    this.cdr.detectChanges(); // flush template so *ngIf creates the container
+    if (mode === 'globe') {
+      // Wait until the container has been laid out (non-zero dimensions)
+      // before passing it to Cesium — a zero-size canvas causes a DeveloperError.
+      requestAnimationFrame(() => this.initGlobeWhenReady());
+    } else {
+      this.destroyGlobe();
+      // leafletMapReady will fire automatically and re-place existing markers
+    }
+  }
+
+  // ─── Cesium Globe ──────────────────────────────────────────────────────────
+  /** Retry via rAF until the container has real pixel dimensions, then init. */
+  private initGlobeWhenReady(retries = 30): void {
+    const el = this.globeContainerRef?.nativeElement;
+    if (!el) {
+      // ViewChild not resolved yet — retry
+      if (retries > 0) {
+        this.cdr.detectChanges();
+        requestAnimationFrame(() => this.initGlobeWhenReady(retries - 1));
+      }
+      return;
+    }
+    if (el.clientWidth > 0 && el.clientHeight > 0) {
+      this.initGlobe();
+    } else if (retries > 0) {
+      requestAnimationFrame(() => this.initGlobeWhenReady(retries - 1));
+    }
+  }
+  private initGlobe(): void {
+    if (!this.globeContainerRef?.nativeElement) return;
+
+    this.cesiumViewer = new Viewer(this.globeContainerRef.nativeElement, {
+      terrainProvider: new EllipsoidTerrainProvider(),
+      animation: false,
+      baseLayerPicker: false,
+      fullscreenButton: false,
+      vrButton: false,
+      geocoder: false,
+      homeButton: false,
+      infoBox: false,
+      sceneModePicker: false,
+      selectionIndicator: false,
+      timeline: false,
+      navigationHelpButton: false,
+      navigationInstructionsInitiallyVisible: false,
+      requestRenderMode: true,
+      maximumRenderTimeChange: Infinity,
+      sceneMode: SceneMode.SCENE3D,
+    });
+
+    (this.cesiumViewer.cesiumWidget.creditContainer as HTMLElement).style.display = 'none';
+    this.cesiumViewer.scene.globe.enableLighting = false;
+    this.cesiumViewer.scene.backgroundColor = Color.fromCssColorString('#1B2735');
+    this.cesiumViewer.scene.globe.tileCacheSize = 100;
+    this.cesiumViewer.scene.globe.maximumScreenSpaceError = 2;
+    this.cesiumViewer.camera.setView({
+      destination: Cartesian3.fromDegrees(10, 30, 20000000),
+    });
+
+    this.cesiumHandler = new ScreenSpaceEventHandler(this.cesiumViewer.scene.canvas);
+    this.cesiumHandler.setInputAction(
+      () => this.cesiumViewer?.scene.requestRender(),
+      ScreenSpaceEventType.MOUSE_MOVE,
+    );
+    this.cesiumHandler.setInputAction(
+      () => this.cesiumViewer?.scene.requestRender(),
+      ScreenSpaceEventType.WHEEL,
+    );
+    this.cesiumHandler.setInputAction(
+      () => this.cesiumViewer?.scene.requestRender(),
+      ScreenSpaceEventType.LEFT_DOWN,
+    );
+    this.cesiumHandler.setInputAction(
+      (e: { position: Cartesian2 }) => this.onGlobeClick(e.position),
+      ScreenSpaceEventType.LEFT_CLICK,
+    );
+
+    // Re-add markers for already-chosen locations
+    if (this.locationA) {
+      this.placeGlobeMarker('A', this.locationA.lat, this.locationA.lon, this.locationA.cityName);
+    }
+    if (this.locationB) {
+      this.placeGlobeMarker('B', this.locationB.lat, this.locationB.lon, this.locationB.cityName);
+    }
+  }
+
+  private destroyGlobe(): void {
+    this.cesiumHandler?.destroy();
+    this.cesiumHandler = null;
+    if (this.cesiumViewer && !this.cesiumViewer.isDestroyed()) {
+      this.cesiumViewer.destroy();
+    }
+    this.cesiumViewer = null;
+    this.cesiumEntityA = null;
+    this.cesiumEntityB = null;
+  }
+
+  private onGlobeClick(screenPos: Cartesian2): void {
+    if (!this.cesiumViewer) return;
+    const ray = this.cesiumViewer.camera.getPickRay(screenPos);
+    if (!ray) return;
+    const cartesian = this.cesiumViewer.scene.globe.pick(ray, this.cesiumViewer.scene);
+    if (!defined(cartesian) || !cartesian) return;
+    const carto = Cartographic.fromCartesian(cartesian);
+    const lat = CesiumMath.toDegrees(carto.latitude);
+    const lon = CesiumMath.toDegrees(carto.longitude);
+    if (this.activeMarker === 'A') {
+      this.setLocationA(lat, lon, true);
+    } else {
+      this.setLocationB(lat, lon, true);
+    }
+  }
+
+  private placeGlobeMarker(which: 'A' | 'B', lat: number, lon: number, cityName?: string): void {
+    if (!this.cesiumViewer) return;
+    const color =
+      which === 'A'
+        ? Color.fromCssColorString('#1565c0')
+        : Color.fromCssColorString('#e65100');
+    const labelText = cityName ? `${which}: ${cityName}` : `Location ${which}`;
+
+    const entityOptions = {
+      position: Cartesian3.fromDegrees(lon, lat),
+      point: {
+        pixelSize: 14,
+        color,
+        outlineColor: Color.WHITE,
+        outlineWidth: 2,
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+      label: {
+        text: labelText,
+        font: '700 12px sans-serif',
+        fillColor: Color.WHITE,
+        outlineColor: color,
+        outlineWidth: 3,
+        style: 2, // LabelStyle.FILL_AND_OUTLINE
+        pixelOffset: new Cartesian2(0, -22),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        showBackground: true,
+        backgroundColor: color.withAlpha(0.75),
+        backgroundPadding: new Cartesian2(6, 4),
+      },
+    } as any;
+
+    if (which === 'A') {
+      if (this.cesiumEntityA) this.cesiumViewer.entities.remove(this.cesiumEntityA);
+      this.cesiumEntityA = this.cesiumViewer.entities.add(entityOptions);
+    } else {
+      if (this.cesiumEntityB) this.cesiumViewer.entities.remove(this.cesiumEntityB);
+      this.cesiumEntityB = this.cesiumViewer.entities.add(entityOptions);
+    }
+    this.cesiumViewer.scene.requestRender();
   }
 }

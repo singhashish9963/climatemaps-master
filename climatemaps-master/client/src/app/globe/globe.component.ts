@@ -32,15 +32,22 @@ import {
   Entity,
   ConstantPositionProperty,
   PointGraphics,
+  BoxGraphics,
+  ColorMaterialProperty,
+  EllipseGraphics,
+  CallbackProperty,
 } from 'cesium';
 
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import {
   ClimateMapService,
   ClimateValueResponse,
+  ColorbarConfigResponse,
   NearestCityResponse,
 } from '../core/climatemap.service';
+import { GlobeBarService, BarRenderData } from './services/globe-bar.service';
 import { MetadataService, YearRange, ClimateVariableConfig } from '../core/metadata.service';
 import {
   ClimateVarKey,
@@ -145,12 +152,23 @@ export class GlobeComponent implements OnInit, OnDestroy {
   private temperatureUnit = TemperatureUnit.CELSIUS;
   private precipitationUnit = PrecipitationUnit.MM;
 
+  // 3D bar state
+  private barEntities: Entity[] = [];
+  isLoadingBars = false;
+  barsVisible = false;
+  private colorbarConfigCache: Map<string, ColorbarConfigResponse> = new Map();
+
+  // Radar pulse animation state
+  private radarEntity: Entity | null = null;
+  private radarAnimationId: number | null = null;
+
   constructor(
     private climateMapService: ClimateMapService,
     private metadataService: MetadataService,
     private layerBuilder: LayerBuilderService,
     private layerFilter: LayerFilterService,
     private globeLayerService: GlobeLayerService,
+    private globeBarService: GlobeBarService,
     private toastService: ToastService,
     private climateVariableHelper: ClimateVariableHelperService,
     private temperatureUnitService: TemperatureUnitService,
@@ -173,6 +191,7 @@ export class GlobeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.stopRadarPulse();
     this.handler?.destroy();
     if (this.viewer && !this.viewer.isDestroyed()) {
       this.viewer.destroy();
@@ -294,6 +313,7 @@ export class GlobeComponent implements OnInit, OnDestroy {
     const dataType = this.selectedOption.metadata.dataType;
     const month = this.controlsData.selectedMonth;
     const variableType = this.controlsData.selectedVariableType;
+    const cameraHeight = this.viewer.camera.positionCartographic.height;
 
     // Show loading tooltip
     this.clickTooltip = {
@@ -309,12 +329,22 @@ export class GlobeComponent implements OnInit, OnDestroy {
     this.placeClickMarker(lat, lon);
     this.cdr.markForCheck();
 
-    // Fetch value and nearest city in parallel
+    // Fetch value, nearest city, and 3D bar data in parallel
+    this.clearBars();
+    this.isLoadingBars = true;
+    this.startRadarPulse(lat, lon, cameraHeight);
+    this.cdr.markForCheck();
+
+    const grid = this.globeBarService.generateGrid(lat, lon, cameraHeight);
+
     forkJoin({
       climate: this.climateMapService.getClimateValue(dataType, month, lat, lon),
       city: this.climateMapService.getNearestCity(lat, lon),
+      gridValues: this.globeBarService.fetchGridValues(grid, dataType, month),
+      colorbar: this.getColorbarConfig(dataType),
     }).subscribe({
-      next: ({ climate, city }) => {
+      next: ({ climate, city, gridValues, colorbar }) => {
+        // Update tooltip
         const { displayValue, displayUnit } = this.formatClimateValue(
           climate,
           variableType,
@@ -334,6 +364,10 @@ export class GlobeComponent implements OnInit, OnDestroy {
           screenX: screenPos.x,
           screenY: screenPos.y,
         };
+
+        // Render 3D bars
+        this.renderBars(gridValues, colorbar, cameraHeight);
+        this.isLoadingBars = false;
         this.cdr.markForCheck();
       },
       error: () => {
@@ -347,6 +381,7 @@ export class GlobeComponent implements OnInit, OnDestroy {
           screenX: screenPos.x,
           screenY: screenPos.y,
         };
+        this.isLoadingBars = false;
         this.cdr.markForCheck();
       },
     });
@@ -404,7 +439,156 @@ export class GlobeComponent implements OnInit, OnDestroy {
       this.clickMarker = null;
       this.viewer.scene.requestRender();
     }
+    this.clearBars();
     this.cdr.markForCheck();
+  }
+
+  // ─── 3D Bar Rendering ───
+
+  private getColorbarConfig(
+    dataType: string,
+  ): Observable<ColorbarConfigResponse> {
+    const cached = this.colorbarConfigCache.get(dataType);
+    if (cached) {
+      return new Observable((subscriber) => {
+        subscriber.next(cached);
+        subscriber.complete();
+      });
+    }
+    return this.climateMapService.getColorbarConfig(dataType).pipe(
+      map((config: ColorbarConfigResponse) => {
+        this.colorbarConfigCache.set(dataType, config);
+        return config;
+      }),
+    );
+  }
+
+  private renderBars(
+    samples: { lat: number; lon: number; value: number }[],
+    colorbar: ColorbarConfigResponse,
+    cameraHeight: number,
+  ): void {
+    this.stopRadarPulse();
+
+    if (!this.viewer || samples.length === 0) return;
+
+    const barData = this.globeBarService.buildBarData(samples, colorbar);
+    const cellSize = this.globeBarService.getCellSizeDeg(cameraHeight);
+
+    // Bar cross-section size in meters (rectangular)
+    const barSideMeters = cellSize * 0.8 * 111000; // ~111km per degree, slightly smaller for gaps
+
+    for (const bar of barData) {
+      const heightMeters = this.globeBarService.getBarHeightMeters(
+        bar.normalizedHeight,
+      );
+
+      // Position the box center at half-height above the surface
+      const position = Cartesian3.fromDegrees(
+        bar.lon,
+        bar.lat,
+        heightMeters / 2,
+      );
+
+      const entity = this.viewer.entities.add({
+        position,
+        box: new BoxGraphics({
+          dimensions: new Cartesian3(barSideMeters, barSideMeters, heightMeters),
+          material: new ColorMaterialProperty(
+            Color.fromBytes(bar.color[0], bar.color[1], bar.color[2], 190),
+          ),
+          outline: true,
+          outlineColor: Color.fromBytes(
+            bar.color[0],
+            bar.color[1],
+            bar.color[2],
+            255,
+          ),
+          outlineWidth: 1,
+        }),
+      });
+
+      this.barEntities.push(entity);
+    }
+
+    this.barsVisible = true;
+    this.viewer.scene.requestRender();
+  }
+
+  clearBars(): void {
+    if (!this.viewer) return;
+    this.stopRadarPulse();
+    for (const entity of this.barEntities) {
+      this.viewer.entities.remove(entity);
+    }
+    this.barEntities = [];
+    this.barsVisible = false;
+    this.viewer.scene.requestRender();
+  }
+
+  // ─── Radar Pulse Animation ───
+
+  private startRadarPulse(lat: number, lon: number, cameraHeight: number): void {
+    this.stopRadarPulse();
+    if (!this.viewer) return;
+
+    const spacing = this.globeBarService.getCellSizeDeg(cameraHeight);
+    // Max radius covers the full 5×5 grid extent
+    const maxRadiusMeters = spacing * 3 * 111000;
+    const cycleDuration = 1500; // ms for one pulse cycle
+    const startTime = performance.now();
+
+    // Expanding ring with fading alpha
+    let currentRadius = 0;
+    let currentAlpha = 180;
+
+    this.radarEntity = this.viewer.entities.add({
+      position: Cartesian3.fromDegrees(lon, lat),
+      ellipse: new EllipseGraphics({
+        semiMajorAxis: new CallbackProperty(() => currentRadius, false),
+        semiMinorAxis: new CallbackProperty(() => currentRadius, false),
+        material: new ColorMaterialProperty(
+          new CallbackProperty(
+            () => Color.fromBytes(0, 200, 255, currentAlpha),
+            false,
+          ),
+        ),
+        outline: true,
+        outlineColor: new CallbackProperty(
+          () => Color.fromBytes(0, 200, 255, Math.min(currentAlpha + 60, 255)),
+          false,
+        ),
+        outlineWidth: 2,
+        height: 100, // slightly above surface
+      }),
+    });
+
+    const animate = () => {
+      const elapsed = performance.now() - startTime;
+      const phase = (elapsed % cycleDuration) / cycleDuration; // 0→1 repeating
+
+      // Ease-out expansion
+      currentRadius = maxRadiusMeters * phase;
+      // Fade out as ring expands
+      currentAlpha = Math.round(180 * (1 - phase));
+
+      this.viewer?.scene.requestRender();
+      this.radarAnimationId = requestAnimationFrame(animate);
+    };
+
+    this.radarAnimationId = requestAnimationFrame(animate);
+  }
+
+  private stopRadarPulse(): void {
+    if (this.radarAnimationId !== null) {
+      cancelAnimationFrame(this.radarAnimationId);
+      this.radarAnimationId = null;
+    }
+    if (this.radarEntity && this.viewer) {
+      this.viewer.entities.remove(this.radarEntity);
+      this.radarEntity = null;
+      this.viewer.scene.requestRender();
+    }
   }
 
   // ─── Zoom Controls ───

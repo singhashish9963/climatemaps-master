@@ -65,6 +65,16 @@
       >
         <mat-icon>public</mat-icon>
       </button>
+      <button
+        *ngIf="barsVisible"
+        mat-icon-button
+        class="nav-button bars-clear-button"
+        (click)="clearBars(); dismissTooltip()"
+        aria-label="Clear 3D bars"
+        title="Clear 3D bars"
+      >
+        <mat-icon>layers_clear</mat-icon>
+      </button>
     </div>
 
     <!-- Globe container -->
@@ -74,6 +84,12 @@
     <div *ngIf="isLoading" class="loading-overlay">
       <mat-spinner diameter="48"></mat-spinner>
       <p>Loading climate data...</p>
+    </div>
+
+    <!-- 3D bars loading indicator -->
+    <div *ngIf="isLoadingBars" class="bars-loading-indicator">
+      <mat-spinner diameter="24"></mat-spinner>
+      <span>Sampling grid data...</span>
     </div>
 
     <!-- Click tooltip -->

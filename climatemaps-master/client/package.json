@@ -23,6 +23,7 @@
     "@angular/router": "^18.2.10",
     "@bluehalo/ngx-leaflet": "^18.0.2",
     "@types/proj4": "^2.5.5",
+    "cesium": "^1.139.1",
     "chart.js": "^4.5.1",
     "leaflet": "^1.9.4",
     "leaflet-spin": "^1.1.2",

@@ -1,0 +1,215 @@
+@import "../../styles/variables";
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+}
+
+.globe-container {
+  height: 100%;
+  width: 100%;
+}
+
+.globe-sidebar {
+  width: 280px;
+  background: #fff;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+
+  .sidebar-content {
+    padding: 8px;
+    position: relative;
+  }
+
+  .sidebar-close-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 10;
+  }
+}
+
+.globe-content {
+  position: relative;
+  height: 100%;
+}
+
+.cesium-viewer-container {
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar-toggle-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    background: #fff;
+  }
+}
+
+// Zoom + Home controls
+.globe-nav-controls {
+  position: absolute;
+  top: 56px;
+  left: 10px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .nav-button {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+
+    &:hover {
+      background: #fff;
+    }
+
+    .mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 24px 32px;
+  border-radius: 12px;
+  text-align: center;
+  z-index: 1002;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+  p {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: #555;
+  }
+}
+
+.globe-info-display {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.88);
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  pointer-events: none;
+
+  .info-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+  }
+
+  .prediction-indicator {
+    color: #e65100;
+    font-style: italic;
+    font-size: 12px;
+  }
+}
+
+// Click-to-query tooltip
+.globe-click-tooltip {
+  position: absolute;
+  z-index: 1002;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+  max-width: 220px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .tooltip-close {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #888;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+
+    &:hover {
+      color: #333;
+    }
+  }
+
+  .tooltip-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 2px;
+  }
+
+  .tooltip-unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: #666;
+  }
+
+  .tooltip-city {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 1px;
+  }
+
+  .tooltip-coords {
+    font-size: 11px;
+    color: #999;
+  }
+}
+
+// Cesium overrides for clean look
+::ng-deep {
+  .cesium-viewer-container {
+    .cesium-viewer {
+      font-family: inherit;
+    }
+
+    // Hide any leftover Cesium widgets
+    .cesium-viewer-toolbar,
+    .cesium-viewer-animationContainer,
+    .cesium-viewer-timelineContainer,
+    .cesium-viewer-fullscreenContainer,
+    .cesium-viewer-vrContainer,
+    .cesium-viewer-bottom {
+      display: none !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .globe-sidebar {
+    width: 100%;
+  }
+
+  .globe-info-display {
+    top: 6px;
+    padding: 4px 12px;
+
+    .info-value {
+      font-size: 11px;
+    }
+  }
+}

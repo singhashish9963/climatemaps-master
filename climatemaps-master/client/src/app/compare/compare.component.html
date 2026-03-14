@@ -1,0 +1,251 @@
+<div class="compare-page">
+
+  <!-- Top controls bar -->
+  <div class="compare-controls">
+
+    <!-- Location A search -->
+    <div class="search-group location-a">
+      <span class="location-label badge-a">A</span>
+      <div class="search-input-wrapper">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search Location A…"
+          [formControl]="searchControlA"
+          [matAutocomplete]="autoA"
+          aria-label="Search location A"
+        />
+        <mat-spinner
+          *ngIf="isLoadingSearchA$ | async"
+          diameter="16"
+          class="search-spinner"
+        ></mat-spinner>
+        <button
+          *ngIf="searchControlA.value && !(isLoadingSearchA$ | async)"
+          mat-icon-button
+          class="clear-search-btn"
+          (click)="clearSearchA()"
+          aria-label="Clear location A"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <mat-autocomplete
+        #autoA="matAutocomplete"
+        [displayWith]="displayLocationName"
+        (optionSelected)="onLocationSelectedA($event.option.value)"
+      >
+        <mat-option
+          *ngFor="let loc of filteredLocationsA$ | async"
+          [value]="loc"
+        >
+          {{ loc.displayName }}
+        </mat-option>
+      </mat-autocomplete>
+    </div>
+
+    <span class="vs-divider">vs</span>
+
+    <!-- Location B search -->
+    <div class="search-group location-b">
+      <span class="location-label badge-b">B</span>
+      <div class="search-input-wrapper">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search Location B…"
+          [formControl]="searchControlB"
+          [matAutocomplete]="autoB"
+          aria-label="Search location B"
+        />
+        <mat-spinner
+          *ngIf="isLoadingSearchB$ | async"
+          diameter="16"
+          class="search-spinner"
+        ></mat-spinner>
+        <button
+          *ngIf="searchControlB.value && !(isLoadingSearchB$ | async)"
+          mat-icon-button
+          class="clear-search-btn"
+          (click)="clearSearchB()"
+          aria-label="Clear location B"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <mat-autocomplete
+        #autoB="matAutocomplete"
+        [displayWith]="displayLocationName"
+        (optionSelected)="onLocationSelectedB($event.option.value)"
+      >
+        <mat-option
+          *ngFor="let loc of filteredLocationsB$ | async"
+          [value]="loc"
+        >
+          {{ loc.displayName }}
+        </mat-option>
+      </mat-autocomplete>
+    </div>
+
+    <!-- Year range -->
+    <div class="year-range-select">
+      <mat-select
+        [(ngModel)]="selectedYearRange"
+        [compareWith]="yearRangeCompare"
+        (ngModelChange)="onYearRangeChange()"
+        placeholder="Year Range"
+      >
+        <mat-option *ngFor="let yr of yearRanges" [value]="yr">
+          {{ yr.label }}
+        </mat-option>
+      </mat-select>
+    </div>
+
+  </div>
+
+  <!-- Map -->
+  <div class="map-container">
+
+    <!-- Marker toggle overlay -->
+    <div class="marker-toggle-overlay">
+      <span class="toggle-hint">Click map to set:</span>
+      <button
+        class="toggle-btn toggle-a"
+        [class.active]="activeMarker === 'A'"
+        (click)="activeMarker = 'A'"
+      >
+        📍 A
+      </button>
+      <button
+        class="toggle-btn toggle-b"
+        [class.active]="activeMarker === 'B'"
+        (click)="activeMarker = 'B'"
+      >
+        📍 B
+      </button>
+    </div>
+
+    <div
+      class="leaflet-map"
+      leaflet
+      [leafletOptions]="mapOptions"
+      (leafletMapReady)="onMapReady($event)"
+      (leafletClick)="onMapClick($event)"
+    ></div>
+  </div>
+
+  <!-- Month slider -->
+  <div class="month-row">
+    <span class="month-row-label">Month</span>
+    <app-month-slider
+      class="month-slider"
+      [value]="selectedMonth"
+      (valueChange)="onMonthChange($event)"
+    ></app-month-slider>
+  </div>
+
+  <!-- Comparison results -->
+  <div class="comparison-section">
+
+    <!-- No locations yet -->
+    <div class="empty-state" *ngIf="!locationA && !locationB">
+      <mat-icon>compare_arrows</mat-icon>
+      <p>
+        Search for two locations above, or click on the map to place
+        <strong style="color:#1565c0">Location A</strong> and
+        <strong style="color:#e65100">Location B</strong> pins.
+      </p>
+    </div>
+
+    <ng-container *ngIf="locationA || locationB">
+
+      <!-- Side-by-side cards -->
+      <div class="cards-row">
+
+        <!-- Location A card -->
+        <div class="location-card card-a">
+          <div class="card-header">
+            <span class="marker-badge badge-a">A</span>
+            <span class="card-city-name">{{ getLocationLabel(locationA, 'A') }}</span>
+            <mat-spinner
+              *ngIf="dataA.isLoading"
+              diameter="18"
+              class="card-spinner"
+            ></mat-spinner>
+          </div>
+          <div class="card-error" *ngIf="dataA.error">{{ dataA.error }}</div>
+          <div class="stat-row" *ngIf="dataA.monthlyData && !dataA.isLoading">
+            <div class="stat-item">
+              <span class="stat-label">Max Temp</span>
+              <span class="stat-value tmax">{{ getMonthValue(dataA, 'tmax') }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Min Temp</span>
+              <span class="stat-value tmin">{{ getMonthValue(dataA, 'tmin') }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Precipitation</span>
+              <span class="stat-value precip">{{ getMonthValue(dataA, 'precipitation') }}</span>
+            </div>
+          </div>
+          <p class="no-data-hint" *ngIf="!locationA">
+            Click map or search to set
+          </p>
+        </div>
+
+        <!-- Month label -->
+        <div class="month-divider">
+          <span class="month-chip">{{ getMonthName() }}</span>
+        </div>
+
+        <!-- Location B card -->
+        <div class="location-card card-b">
+          <div class="card-header">
+            <span class="marker-badge badge-b">B</span>
+            <span class="card-city-name">{{ getLocationLabel(locationB, 'B') }}</span>
+            <mat-spinner
+              *ngIf="dataB.isLoading"
+              diameter="18"
+              class="card-spinner"
+            ></mat-spinner>
+          </div>
+          <div class="card-error" *ngIf="dataB.error">{{ dataB.error }}</div>
+          <div class="stat-row" *ngIf="dataB.monthlyData && !dataB.isLoading">
+            <div class="stat-item">
+              <span class="stat-label">Max Temp</span>
+              <span class="stat-value tmax">{{ getMonthValue(dataB, 'tmax') }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Min Temp</span>
+              <span class="stat-value tmin">{{ getMonthValue(dataB, 'tmin') }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Precipitation</span>
+              <span class="stat-value precip">{{ getMonthValue(dataB, 'precipitation') }}</span>
+            </div>
+          </div>
+          <p class="no-data-hint" *ngIf="!locationB">
+            Click map or search to set
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-card" *ngIf="dataA.monthlyData && dataB.monthlyData">
+        <canvas #chartCanvas></canvas>
+      </div>
+
+      <div
+        class="chart-placeholder"
+        *ngIf="!(dataA.monthlyData && dataB.monthlyData)"
+      >
+        <mat-icon>insert_chart_outlined</mat-icon>
+        <p>Select both locations to see the monthly comparison chart</p>
+      </div>
+
+    </ng-container>
+
+  </div>
+
+</div>

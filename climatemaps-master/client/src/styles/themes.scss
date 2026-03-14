@@ -1,0 +1,145 @@
+// ── Light theme (default) ──
+body.light-theme,
+body:not(.dark-theme) {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #f8f9fa;
+  --bg-overlay: rgba(255, 255, 255, 0.95);
+  --bg-overlay-strong: rgba(255, 255, 255, 0.9);
+  --bg-loading: rgba(255, 255, 255, 0.8);
+  --bg-disabled: rgba(255, 255, 255, 0.4);
+
+  --text-primary: #333333;
+  --text-heading: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --text-placeholder: #9e9e9e;
+  --text-on-primary: #ffffff;
+
+  --border-color: #e0e0e0;
+  --border-strong: #dddddd;
+  --border-divider: rgba(0, 0, 0, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-up: 0 -2px 8px rgba(0, 0, 0, 0.15);
+
+  --primary: #1565c0;
+  --primary-light: #2196f3;
+  --primary-hover: #1976d2;
+  --primary-active: rgba(33, 150, 243, 0.85);
+  --primary-active-hover: rgba(33, 150, 243, 0.95);
+
+  --accent-green: #2e7d32;
+  --accent-purple: #ab3ce7;
+  --accent-orange: #ff9800;
+  --accent-red: #f44336;
+  --accent-success: #4caf50;
+  --accent-info: #2196f3;
+
+  --input-bg: #f5f5f5;
+  --input-hover: #eeeeee;
+  --input-focus: #e0e0e0;
+  --input-text: rgba(0, 0, 0, 0.87);
+
+  --toolbar-bg: #ffffff;
+  --toolbar-text: #1565c0;
+
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  --map-bg: #e0e0e0;
+
+  --slider-label: rgba(0, 0, 0, 0.6);
+  --overlay-label: #2c3e50;
+
+  --icon-muted: #666666;
+
+  --mat-menu-bg: #ffffff;
+  --mat-menu-text: inherit;
+
+  color-scheme: light;
+}
+
+// ── Dark theme ──
+body.dark-theme {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #252525;
+  --bg-overlay: rgba(30, 30, 30, 0.95);
+  --bg-overlay-strong: rgba(30, 30, 30, 0.9);
+  --bg-loading: rgba(30, 30, 30, 0.8);
+  --bg-disabled: rgba(50, 50, 50, 0.4);
+
+  --text-primary: #e0e0e0;
+  --text-heading: #f0f0f0;
+  --text-secondary: #aaaaaa;
+  --text-muted: #888888;
+  --text-placeholder: #777777;
+  --text-on-primary: #ffffff;
+
+  --border-color: #3a3a3a;
+  --border-strong: #444444;
+  --border-divider: rgba(255, 255, 255, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-up: 0 -2px 8px rgba(0, 0, 0, 0.4);
+
+  --primary: #64b5f6;
+  --primary-light: #64b5f6;
+  --primary-hover: #90caf9;
+  --primary-active: rgba(33, 150, 243, 0.7);
+  --primary-active-hover: rgba(33, 150, 243, 0.85);
+
+  --accent-green: #66bb6a;
+  --accent-purple: #ce93d8;
+  --accent-orange: #ffb74d;
+  --accent-red: #ef5350;
+  --accent-success: #66bb6a;
+  --accent-info: #64b5f6;
+
+  --input-bg: #2a2a2a;
+  --input-hover: #333333;
+  --input-focus: #3a3a3a;
+  --input-text: rgba(255, 255, 255, 0.87);
+
+  --toolbar-bg: #1e1e1e;
+  --toolbar-text: #64b5f6;
+
+  --card-bg: #2a2a2a;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+  --map-bg: #1a1a1a;
+
+  --slider-label: rgba(255, 255, 255, 0.6);
+  --overlay-label: #b0bec5;
+
+  --icon-muted: #aaaaaa;
+
+  --mat-menu-bg: #2a2a2a;
+  --mat-menu-text: #e0e0e0;
+
+  color-scheme: dark;
+
+  // Angular Material dark overrides
+  --mdc-filled-text-field-container-color: var(--input-bg);
+  --mdc-outlined-text-field-container-color: var(--input-bg);
+  --mat-select-panel-background-color: var(--bg-secondary);
+  --mat-option-label-text-color: var(--text-primary);
+  --mat-sidenav-container-background-color: var(--bg-primary);
+  --mat-sidenav-content-background-color: var(--bg-primary);
+  --mat-sidenav-container-divider-color: var(--border-color);
+  --mat-toolbar-container-background-color: var(--toolbar-bg);
+  --mat-toolbar-container-text-color: var(--toolbar-text);
+  --mat-menu-container-color: var(--mat-menu-bg);
+  --mat-menu-item-label-text-color: var(--mat-menu-text);
+  --mdc-plain-tooltip-container-color: var(--bg-secondary);
+  --mdc-plain-tooltip-supporting-text-color: var(--text-primary);
+  --mat-card-container-color: var(--card-bg);
+  --mdc-slider-label-container-color: var(--primary-active);
+}

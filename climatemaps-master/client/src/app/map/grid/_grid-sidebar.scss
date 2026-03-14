@@ -35,11 +35,11 @@
   top: 16px;
   left: 10px;
   z-index: 2000;
-  background-color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-xl);
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bg-secondary);
   }
 }
 
@@ -48,8 +48,8 @@
   top: 16px;
   left: 10px;
   z-index: 2000;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-md);
 
   @media (min-width: 769px) {
     top: 120px;
@@ -124,7 +124,7 @@
   }
 
   .leaflet-container {
-    background: #e0e0e0;
+    background: var(--map-bg);
   }
 
   .leaflet-control-attribution {

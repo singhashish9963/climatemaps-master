@@ -10,6 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TemperatureUnitSelectorComponent } from './core/temperature-unit-selector.component';
 import { PrecipitationUnitSelectorComponent } from './core/precipitation-unit-selector.component';
 import { LocationSearchComponent } from './core/location-search.component';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit {
   constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
+    public themeService: ThemeService,
   ) {
     this.matIconRegistry.addSvgIcon(
       'github',

@@ -3,7 +3,7 @@
 .climate-timerange-plot-card {
   width: 500px;
   max-width: 100%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
 
   @media (max-width: 768px) {
     width: 100%;

@@ -8,6 +8,7 @@
   <a mat-button routerLink="/climate-predictions">Climate Predictions</a>
   <a mat-button routerLink="/climate-scenarios">Climate Scenarios</a>
   <a mat-button routerLink="/climate-matrix">Climate Matrix</a>
+  <a mat-button routerLink="/stories">Stories</a>
 
   <span class="spacer"></span>
 
@@ -20,6 +21,14 @@
   >
     <mat-icon svgIcon="github"></mat-icon>
   </a>
+  <button
+    mat-icon-button
+    (click)="themeService.toggle()"
+    [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+    class="theme-toggle-button"
+  >
+    <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
   <button
     mat-icon-button
     [matMenuTriggerFor]="settingsMenu"
@@ -43,6 +52,17 @@
       <div class="settings-section">
         <span class="settings-label">Precipitation Unit</span>
         <app-precipitation-unit-selector></app-precipitation-unit-selector>
+      </div>
+      <div class="settings-section">
+        <span class="settings-label">Theme</span>
+        <button
+          mat-button
+          (click)="themeService.toggle()"
+          class="theme-menu-button"
+        >
+          <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+          {{ themeService.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+        </button>
       </div>
     </div>
   </mat-menu>

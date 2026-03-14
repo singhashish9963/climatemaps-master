@@ -13,11 +13,11 @@
 }
 
 .overlay-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-overlay);
   backdrop-filter: blur(10px);
   border-radius: 0;
   padding: 4px 15px;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-up);
   pointer-events: auto;
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@
 .overlay-label {
   font-size: 11px;
   font-weight: 500;
-  color: #2c3e50;
+  color: var(--overlay-label);
   white-space: nowrap;
   min-width: 40px;
 }
@@ -60,7 +60,7 @@
 .month-display {
   font-size: 11px;
   font-weight: 600;
-  color: #2196f3;
+  color: var(--primary-light);
   min-width: 60px;
   text-align: center;
 }
@@ -69,10 +69,10 @@
   min-width: 80px;
 
   &.historical {
-    color: #2196f3; // Blue for historical data
+    color: var(--primary-light); // Blue for historical data
   }
 
   &.prediction {
-    color: #ab3ce7; // Purple for predictions
+    color: var(--accent-purple); // Purple for predictions
   }
 }

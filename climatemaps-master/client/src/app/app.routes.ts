@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AboutComponent } from './about.component';
+import { StoryModeComponent } from './stories/story-mode.component';
 import { MapComponent } from './map';
 import { MonthlyGridComponent } from './map/grid/monthly-grid.component';
 import { ScenarioGridComponent } from './map/grid/scenario-grid.component';
@@ -102,6 +103,7 @@ export const routes: Routes = [
   { path: 'climate-predictions', component: YearRangeGridComponent },
   { path: 'climate-matrix', component: ScenarioYearRangeGridComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'stories', component: StoryModeComponent },
   // Climate variable routes for SEO - generated dynamically
   ...generateClimateVariableRoutes(),
 ];

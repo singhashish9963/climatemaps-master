@@ -4,10 +4,10 @@
   @extend .slider-labels;
 
   .historical {
-    color: #2196f3; // Blue for historical data
+    color: var(--primary-light); // Blue for historical data
   }
 
   .prediction {
-    color: #ab3ce7; // Purple for predictions
+    color: var(--accent-purple); // Purple for predictions
   }
 }

@@ -1,8 +1,8 @@
 @import "../styles/variables";
 
 mat-toolbar {
-  background-color: white !important;
-  color: #1565c0;
+  background-color: var(--toolbar-bg) !important;
+  color: var(--toolbar-text);
   min-height: $navbar-height !important;
   height: $navbar-height !important;
   display: flex;
@@ -31,14 +31,14 @@ mat-toolbar {
 .settings-label {
   font-size: 12px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .app-title-link {
   text-decoration: none;
-  color: #1565c0;
+  color: var(--toolbar-text);
   font-family:
     system-ui,
     -apple-system,
@@ -47,4 +47,14 @@ mat-toolbar {
   font-weight: 600;
   margin-left: 8px;
   margin-right: 24px;
+}
+
+.theme-toggle-button {
+  color: var(--toolbar-text);
+}
+
+.theme-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

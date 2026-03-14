@@ -101,5 +101,16 @@
       <span class="settings-label">Precipitation Unit</span>
       <app-precipitation-unit-selector></app-precipitation-unit-selector>
     </div>
+    <div class="settings-section">
+      <span class="settings-label">Theme</span>
+      <button
+        mat-button
+        (click)="themeService.toggle()"
+        class="theme-menu-button"
+      >
+        <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        {{ themeService.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+      </button>
+    </div>
   </div>
 </mat-menu>

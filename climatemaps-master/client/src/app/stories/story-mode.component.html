@@ -1,0 +1,97 @@
+<div class="story-mode" [class.mobile]="isMobile">
+  <!-- Left: story list panel -->
+  <div class="story-list-panel" [class.collapsed]="isMobile && selectedStory">
+    <h2 class="panel-title">
+      <mat-icon class="title-icon">auto_stories</mat-icon>
+      Climate Stories
+    </h2>
+    <p class="panel-subtitle">A guided tour through major climate events</p>
+
+    <div class="story-items">
+      <button
+        *ngFor="let story of stories; let i = index"
+        class="story-item"
+        [class.active]="i === selectedIndex"
+        (click)="selectStory(i)"
+      >
+        <span class="story-number">{{ i + 1 }}</span>
+        <div class="story-item-content">
+          <span class="story-item-title">{{ story.title }}</span>
+          <span class="story-item-meta">
+            {{ getVariableDisplayName(story.variable) }} &middot;
+            {{ getMonthName(story.month) }}
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="story-controls">
+      <button mat-stroked-button (click)="prevStory()" [disabled]="stories.length <= 1">
+        <mat-icon>arrow_back</mat-icon> Prev
+      </button>
+      <mat-slide-toggle
+        [checked]="autoPlay"
+        (change)="toggleAutoPlay()"
+        color="primary"
+      >
+        Auto Play
+      </mat-slide-toggle>
+      <button mat-stroked-button (click)="nextStory()" [disabled]="stories.length <= 1">
+        Next <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Right: map + info overlay -->
+  <div class="story-map-panel">
+    <div
+      class="map-container"
+      leaflet
+      [leafletOptions]="mapOptions"
+      (leafletMapReady)="onMapReady($event)"
+    ></div>
+
+    <!-- Info card overlay -->
+    <div class="story-info-overlay" *ngIf="selectedStory">
+      <mat-card class="story-info-card">
+        <mat-card-header>
+          <mat-card-title>{{ selectedStory.title }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ getVariableDisplayName(selectedStory.variable) }} &middot;
+            {{ getMonthName(selectedStory.month) }}
+            <span *ngIf="nearestCity">
+              &middot; Near {{ nearestCity.city_name }}, {{ nearestCity.country_name }}
+            </span>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="story-description">{{ selectedStory.description }}</p>
+          <div class="story-stats">
+            <div class="stat" *ngIf="!isLoading && displayValue">
+              <span class="stat-label">Climate Value</span>
+              <span class="stat-value">{{ displayValue }}</span>
+            </div>
+            <div class="stat" *ngIf="isLoading">
+              <span class="stat-label">Loading...</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Location</span>
+              <span class="stat-value">{{ selectedStory.lat.toFixed(1) }}°, {{ selectedStory.lon.toFixed(1) }}°</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Data Source</span>
+              <span class="stat-value">{{ selectedStory.dataSource }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Mobile prev/next -->
+      <div class="mobile-nav" *ngIf="isMobile">
+        <button mat-icon-button (click)="prevStory()"><mat-icon>arrow_back</mat-icon></button>
+        <span class="mobile-counter">{{ selectedIndex + 1 }} / {{ stories.length }}</span>
+        <button mat-icon-button (click)="nextStory()"><mat-icon>arrow_forward</mat-icon></button>
+      </div>
+    </div>
+  </div>
+</div>

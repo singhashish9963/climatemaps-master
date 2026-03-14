@@ -34,7 +34,7 @@
   height: 44px;
   padding: 0;
   padding-right: 44px;
-  background: rgba(255, 255, 255, 1);
+  background: var(--bg-primary);
   border: none;
   border-radius: 22px;
   cursor: pointer;
@@ -43,11 +43,11 @@
   overflow: hidden;
   position: relative;
   margin-left: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 
   &:hover:not(.disabled) {
     width: 150px;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-overlay);
 
     .variable-name {
       opacity: 1;
@@ -57,24 +57,24 @@
 
   &.selected {
     width: 150px;
-    background: rgba(33, 150, 243, 0.85);
-    color: white;
+    background: var(--primary-active);
+    color: var(--text-on-primary);
 
     .variable-name {
-      color: white;
+      color: var(--text-on-primary);
       opacity: 1;
       width: auto;
     }
 
     &:hover {
-      background: rgba(33, 150, 243, 0.95);
+      background: var(--primary-active-hover);
     }
   }
 
   &.disabled {
     opacity: 0.35;
     cursor: not-allowed;
-    background: rgba(255, 255, 255, 0.4);
+    background: var(--bg-disabled);
 
     &:hover {
       width: 44px;
@@ -112,7 +112,7 @@
 .variable-icon {
   font-size: 22px;
   line-height: 1;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(var(--shadow-sm));
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -151,7 +151,7 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 1;
-  color: #2c3e50;
+  color: var(--overlay-label);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

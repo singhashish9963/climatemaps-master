@@ -19,6 +19,7 @@ import {
 import { MapNavigationService } from '../../core/map-navigation.service';
 import { TemperatureUnitSelectorComponent } from '../../core/temperature-unit-selector.component';
 import { PrecipitationUnitSelectorComponent } from '../../core/precipitation-unit-selector.component';
+import { ThemeService } from '../../core/theme.service';
 
 @Component({
   selector: 'app-mobile-hamburger-menu',
@@ -51,6 +52,7 @@ export class MobileHamburgerMenuComponent {
     private mapNavigationService: MapNavigationService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
+    public themeService: ThemeService,
   ) {
     this.matIconRegistry.addSvgIcon(
       'github',

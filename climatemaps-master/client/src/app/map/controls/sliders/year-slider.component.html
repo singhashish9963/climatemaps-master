@@ -1,12 +1,17 @@
 <mat-slider
   showTickMarks
   [min]="1"
-  [max]="years.length"
+  [max]="years.length || 1"
   step="1"
   [displayWith]="displayWith"
   [disabled]="disabled"
 >
-  <input matSliderThumb [value]="sliderValue" (valueChange)="onInput($event)" />
+  <input
+    matSliderThumb
+    [value]="sliderValue"
+    (input)="onInput($any($event).target.value)"
+    (change)="onInput($any($event).target.value)"
+  />
 </mat-slider>
 
 <div class="year-labels">

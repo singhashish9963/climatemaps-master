@@ -38,17 +38,18 @@ export class YearSliderComponent {
     return index >= 0 ? index + 1 : 1;
   }
 
-  onInput(value: number) {
-    console.log('onInput', value);
-    if (this.years.length > 0 && value >= 1 && value <= this.years.length) {
-      const selectedYear = this.years[value - 1];
+  onInput(value: number | string) {
+    const numValue = Number(value);
+    console.log('onInput', numValue);
+    if (this.years.length > 0 && numValue >= 1 && numValue <= this.years.length) {
+      const selectedYear = this.years[numValue - 1];
       this.valueChange.emit(selectedYear);
 
       this.tracker.trackEvent(
         'Slider Control',
         'Year Range Change',
         selectedYear.label,
-        value,
+        numValue,
       );
     }
   }

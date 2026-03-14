@@ -101,10 +101,30 @@
       </mat-select>
     </div>
 
+    <!-- Map / Globe toggle -->
+    <div class="view-mode-toggle" aria-label="View mode">
+      <button
+        class="view-btn"
+        [class.active]="viewMode === 'map'"
+        (click)="switchView('map')"
+        title="Map view"
+      >
+        <mat-icon>map</mat-icon>
+      </button>
+      <button
+        class="view-btn"
+        [class.active]="viewMode === 'globe'"
+        (click)="switchView('globe')"
+        title="3D Globe view"
+      >
+        <mat-icon>public</mat-icon>
+      </button>
+    </div>
+
   </div>
 
-  <!-- Map -->
-  <div class="map-container">
+  <!-- Map (Leaflet) -->
+  <div class="map-container" [class.map-expanded]="!showBottomBar" *ngIf="viewMode === 'map'">
 
     <!-- Marker toggle overlay -->
     <div class="marker-toggle-overlay">
@@ -134,6 +154,31 @@
     ></div>
   </div>
 
+  <!-- Globe (Cesium) -->
+  <div class="map-container" [class.map-expanded]="!showBottomBar" *ngIf="viewMode === 'globe'">
+
+    <!-- Marker toggle overlay -->
+    <div class="marker-toggle-overlay">
+      <span class="toggle-hint">Click globe to set:</span>
+      <button
+        class="toggle-btn toggle-a"
+        [class.active]="activeMarker === 'A'"
+        (click)="activeMarker = 'A'"
+      >
+        📍 A
+      </button>
+      <button
+        class="toggle-btn toggle-b"
+        [class.active]="activeMarker === 'B'"
+        (click)="activeMarker = 'B'"
+      >
+        📍 B
+      </button>
+    </div>
+
+    <div #globeContainer class="cesium-compare-container"></div>
+  </div>
+
   <!-- Month slider -->
   <div class="month-row">
     <span class="month-row-label">Month</span>
@@ -144,8 +189,30 @@
     ></app-month-slider>
   </div>
 
+  <!-- Bottom bar toggle strip -->
+  <div class="bottom-bar-header" (click)="toggleBottomBar()">
+    <span class="bottom-bar-title">
+      <mat-icon class="bottom-bar-icon">bar_chart</mat-icon>
+      Results
+      <ng-container *ngIf="locationA || locationB">
+        <span class="bottom-bar-locations">
+          — {{ getLocationLabel(locationA, 'A') }}
+          <ng-container *ngIf="locationB"> vs {{ getLocationLabel(locationB, 'B') }}</ng-container>
+        </span>
+      </ng-container>
+    </span>
+    <button
+      mat-icon-button
+      class="bottom-bar-chevron"
+      [attr.aria-label]="showBottomBar ? 'Collapse results' : 'Expand results'"
+      [title]="showBottomBar ? 'Collapse results' : 'Expand results'"
+    >
+      <mat-icon>{{ showBottomBar ? 'expand_more' : 'expand_less' }}</mat-icon>
+    </button>
+  </div>
+
   <!-- Comparison results -->
-  <div class="comparison-section">
+  <div class="comparison-section" *ngIf="showBottomBar">
 
     <!-- No locations yet -->
     <div class="empty-state" *ngIf="!locationA && !locationB">

@@ -21,42 +21,32 @@ export class YearSliderComponent {
   @Input() disabled = false;
 
   get sliderValue(): number {
-    if (!this.value || this.years.length === 0) {
-      return 1;
-    }
-    const index = this.years.findIndex((year) => {
+    if (!this.value || this.years.length === 0) return 1;
+    const index = this.years.findIndex((yr) => {
       const matchesPrimary =
-        year.value[0] === this.value!.value[0] &&
-        year.value[1] === this.value!.value[1];
-      const matchesAdditional = year.additionalValues?.some(
-        (additionalValue: [number, number]) =>
-          additionalValue[0] === this.value!.value[0] &&
-          additionalValue[1] === this.value!.value[1],
+        yr.value[0] === this.value!.value[0] &&
+        yr.value[1] === this.value!.value[1];
+      const matchesAdditional = yr.additionalValues?.some(
+        (av: [number, number]) =>
+          av[0] === this.value!.value[0] && av[1] === this.value!.value[1],
       );
       return matchesPrimary || matchesAdditional;
     });
     return index >= 0 ? index + 1 : 1;
   }
 
-  onInput(value: number | string) {
-    const numValue = Number(value);
-    console.log('onInput', numValue);
-    if (this.years.length > 0 && numValue >= 1 && numValue <= this.years.length) {
-      const selectedYear = this.years[numValue - 1];
-      this.valueChange.emit(selectedYear);
-
-      this.tracker.trackEvent(
-        'Slider Control',
-        'Year Range Change',
-        selectedYear.label,
-        numValue,
-      );
+  onInput(raw: number | string) {
+    const idx = Number(raw);
+    if (this.years.length > 0 && idx >= 1 && idx <= this.years.length) {
+      const selected = this.years[idx - 1];
+      this.valueChange.emit(selected);
+      this.tracker.trackEvent('Slider Control', 'Year Range Change', selected.label, idx);
     }
   }
 
-  displayWith = (val: number) => {
+  displayWith = (val: number): string => {
     if (this.years.length > 0 && val >= 1 && val <= this.years.length) {
-      return this.years[val - 1]?.label || '';
+      return this.years[val - 1]?.label ?? '';
     }
     return '';
   };

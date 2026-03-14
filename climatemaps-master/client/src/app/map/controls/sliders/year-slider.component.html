@@ -16,10 +16,8 @@
 
 <div class="year-labels">
   <span
-    *ngFor="let year of years; let i = index"
+    *ngFor="let year of years"
     [class.historical]="isHistoricalYearRange(year)"
     [class.prediction]="!isHistoricalYearRange(year)"
-  >
-    {{ year.label }}
-  </span>
+  >{{ year.label }}</span>
 </div>

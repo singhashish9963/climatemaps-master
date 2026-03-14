@@ -3,8 +3,8 @@
 // ── Host ──────────────────────────────────────────────────────
 :host {
   display: block;
-  height: $bottom-controls-height;
-  padding: 4px 0 0;
+  height: 72px;
+  padding: 2px 0 0;
 }
 
 // ── Angular Material MDC slider overrides ─────────────────────
@@ -79,17 +79,20 @@
   }
 }
 
-// Slider element itself
+// Slider spans full width — labels align via flex space-between
 mat-slider {
-  margin-left: 10%;
-  margin-right: 10%;
-  display: flex;
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  width: 100%;
+  padding: 0 !important;
 }
 
-// Month slider: tighter margins for 12 ticks
+// Month slider: half-step inset so Jan/Dec labels center under the thumb
 :host(.month-slider) mat-slider {
   margin-left: calc(100% / 24);
   margin-right: calc(100% / 24);
+  width: calc(100% - 2 * (100% / 24));
 }
 
 // ── Labels row below slider ───────────────────────────────────

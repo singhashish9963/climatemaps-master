@@ -1,3 +1,71 @@
+// ── Two-step slider panel ──────────────────────────────────────
+.sliders-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 76px;
+  padding: 0 16px;
+}
+
+.slider-step-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  gap: 2px;
+
+  .step-number {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .step-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+  }
+}
+
+.slider-track {
+  flex: 1;
+  min-width: 0;
+
+  app-year-slider,
+  app-month-slider {
+    display: block;
+    width: 100%;
+  }
+}
+
+.slider-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0 16px;
+  flex-shrink: 0;
+}
+
+// ── Controls row ───────────────────────────────────────────────
 .controls-row {
   display: flex;
   flex-wrap: wrap;

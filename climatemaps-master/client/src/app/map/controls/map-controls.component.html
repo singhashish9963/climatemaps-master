@@ -1,16 +1,38 @@
-<div class="row sliders-row">
-  <div class="column sliders-container">
-    <app-month-slider
-      [value]="controlsData?.selectedMonth || 1"
-      (valueChange)="onMonthSelected($event)"
-    ></app-month-slider>
-    <app-year-slider
-      [value]="controlsData?.selectedYearRange || null"
-      [years]="controlsOptions?.yearRanges || []"
-      [disabled]="shouldDisableYearSlider()"
-      (valueChange)="onYearSelected($event)"
-    ></app-year-slider>
+<div class="sliders-panel" *ngIf="!showDropDownControls || true">
+
+  <!-- Step 1: Year/Period -->
+  <div class="slider-row">
+    <div class="slider-step-label">
+      <span class="step-number">1</span>
+      <span class="step-text">Period</span>
+    </div>
+    <div class="slider-track">
+      <app-year-slider
+        [value]="controlsData?.selectedYearRange || null"
+        [years]="controlsOptions?.yearRanges || []"
+        [disabled]="shouldDisableYearSlider()"
+        (valueChange)="onYearSelected($event)"
+      ></app-year-slider>
+    </div>
   </div>
+
+  <!-- Divider -->
+  <div class="slider-divider"></div>
+
+  <!-- Step 2: Month -->
+  <div class="slider-row">
+    <div class="slider-step-label">
+      <span class="step-number">2</span>
+      <span class="step-text">Month</span>
+    </div>
+    <div class="slider-track">
+      <app-month-slider
+        [value]="controlsData?.selectedMonth || 1"
+        (valueChange)="onMonthSelected($event)"
+      ></app-month-slider>
+    </div>
+  </div>
+
 </div>
 
 <div class="row controls-row" *ngIf="showDropDownControls">

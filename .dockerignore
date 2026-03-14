@@ -1,0 +1,9 @@
+.git
+**/__pycache__
+**/*.pyc
+
+climatemaps-master/data/
+climatemaps-master/client/
+climatemaps-master/infra/
+climatemaps-master/scripts/
+climatemaps-master/.cursor/

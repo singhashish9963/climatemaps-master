@@ -7,21 +7,17 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt .
+COPY climatemaps-master/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install climatemaps package
-COPY climatemaps ./climatemaps
-COPY setup.py .
-COPY README.md .
+COPY climatemaps-master/climatemaps ./climatemaps
+COPY climatemaps-master/setup.py .
+COPY climatemaps-master/README.md .
 RUN pip install --no-cache-dir .
 
-# Copy the rest of your FastAPI app
-COPY api/ ./api/
+COPY climatemaps-master/api/ ./api/
 
 EXPOSE 8000
 
-# 5. Run Uvicorn
 CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

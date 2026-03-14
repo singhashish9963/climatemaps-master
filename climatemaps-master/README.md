@@ -121,6 +121,8 @@ pytest
 
 ## Build and deploy (to openclimatemap.org)
 
+Railway deployment guide: see [RAILWAY_DEPLOY.md](RAILWAY_DEPLOY.md)
+
 ### Everything
 
 Build and deploy client and backend:

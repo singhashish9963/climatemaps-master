@@ -6,5 +6,11 @@
     "logLevel": "debug",
     "timeout": 120000,
     "proxyTimeout": 120000
+  },
+  "/data": {
+    "target": "https://openclimatemap.org/tiles",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }

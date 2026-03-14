@@ -123,18 +123,24 @@
   }
 }
 
-.story-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
+.story-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
   flex-shrink: 0;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+
+  .story-item.active & {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .mobile & {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+  }
 }
 
 .story-item-content {
@@ -177,9 +183,46 @@
   min-width: 0;
 }
 
-.map-container {
+.map-container,
+.globe-container {
   width: 100%;
   height: 100%;
+}
+
+// ---- View mode toggle ----
+.view-mode-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1001;
+
+  mat-button-toggle-group {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    border: none;
+    overflow: hidden;
+  }
+
+  mat-button-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 500;
+
+    .mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .toggle-label {
+    .mobile & {
+      display: none;
+    }
+  }
 }
 
 // ---- Info overlay ----
@@ -209,9 +252,21 @@
   border-radius: 12px !important;
   box-shadow: var(--shadow-lg) !important;
   backdrop-filter: blur(8px);
+  overflow: hidden;
 
   .mobile & {
     max-width: 100%;
+  }
+}
+
+.story-hero-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+
+  .mobile & {
+    height: 120px;
   }
 }
 

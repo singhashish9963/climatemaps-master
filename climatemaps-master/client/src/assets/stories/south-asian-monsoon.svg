@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="monsoon-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#78909c"/>
+      <stop offset="40%" stop-color="#b0bec5"/>
+      <stop offset="100%" stop-color="#eceff1"/>
+    </linearGradient>
+    <linearGradient id="dry-field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c8b06c"/>
+      <stop offset="100%" stop-color="#a89050"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#monsoon-sky)"/>
+  <!-- Empty/thin clouds (monsoon failure = no rain) -->
+  <ellipse cx="150" cy="70" rx="120" ry="40" fill="#cfd8dc" opacity="0.6"/>
+  <ellipse cx="200" cy="60" rx="80" ry="35" fill="#eceff1" opacity="0.5"/>
+  <ellipse cx="500" cy="90" rx="140" ry="45" fill="#cfd8dc" opacity="0.5"/>
+  <ellipse cx="560" cy="80" rx="90" ry="35" fill="#eceff1" opacity="0.4"/>
+  <!-- No rain drops — just empty sky -->
+  <!-- Dry fields -->
+  <rect y="260" width="800" height="140" fill="url(#dry-field)"/>
+  <!-- Parched crop rows -->
+  <g stroke="#8d6c3a" stroke-width="1.5" fill="none" opacity="0.7">
+    <path d="M50 280 Q150 275 250 280 Q350 285 450 280 Q550 275 650 280 Q700 283 800 280"/>
+    <path d="M50 305 Q150 300 250 305 Q350 310 450 305 Q550 300 650 305 Q700 308 800 305"/>
+    <path d="M50 330 Q150 325 250 330 Q350 335 450 330 Q550 325 650 330 Q700 333 800 330"/>
+    <path d="M50 355 Q150 350 250 355 Q350 360 450 355 Q550 350 650 355 Q700 358 800 355"/>
+  </g>
+  <!-- Wilted crop symbols -->
+  <g fill="none" stroke="#6d4c41" stroke-width="2">
+    <path d="M200 280 L200 260 Q195 252 188 256"/>
+    <path d="M400 280 L400 258 Q395 250 387 254"/>
+    <path d="M600 280 L600 262 Q595 254 588 258"/>
+  </g>
+  <!-- Rainfall deficit indicator -->
+  <g transform="translate(650, 140)">
+    <rect x="0" y="0" width="100" height="80" rx="8" fill="#fff" opacity="0.85"/>
+    <text x="50" y="25" font-family="Arial,sans-serif" font-size="12" fill="#616161" text-anchor="middle" font-weight="600">Rainfall</text>
+    <text x="50" y="50" font-family="Arial,sans-serif" font-size="22" fill="#e53935" text-anchor="middle" font-weight="bold">-23%</text>
+    <text x="50" y="70" font-family="Arial,sans-serif" font-size="11" fill="#9e9e9e" text-anchor="middle">below normal</text>
+  </g>
+  <!-- Title -->
+  <text x="400" y="385" font-family="Arial,sans-serif" font-size="18" fill="#5d4037" text-anchor="middle" font-weight="600" opacity="0.9">South Asia · July 2009</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="polar-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a237e"/>
+      <stop offset="50%" stop-color="#283593"/>
+      <stop offset="100%" stop-color="#5c6bc0"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1565c0"/>
+      <stop offset="100%" stop-color="#0d47a1"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#polar-sky)"/>
+  <!-- Stars -->
+  <circle cx="100" cy="40" r="2" fill="#fff" opacity="0.7"/>
+  <circle cx="250" cy="70" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="600" cy="30" r="2" fill="#fff" opacity="0.8"/>
+  <circle cx="720" cy="80" r="1.5" fill="#fff" opacity="0.6"/>
+  <circle cx="450" cy="50" r="1" fill="#fff" opacity="0.4"/>
+  <!-- Ocean -->
+  <rect y="220" width="800" height="180" fill="url(#water)"/>
+  <!-- Large ice chunk breaking -->
+  <polygon points="100,200 260,180 300,220 280,300 150,310 80,260" fill="#e3f2fd" stroke="#90caf9" stroke-width="2"/>
+  <polygon points="260,180 300,220 310,200 290,170" fill="#bbdefb" stroke="#90caf9" stroke-width="1"/>
+  <!-- Smaller ice pieces floating away -->
+  <polygon points="380,250 420,240 430,270 390,275" fill="#e3f2fd" stroke="#90caf9" stroke-width="1.5" opacity="0.9"/>
+  <polygon points="480,260 510,255 520,280 490,282" fill="#e3f2fd" stroke="#90caf9" stroke-width="1" opacity="0.8"/>
+  <polygon points="560,270 580,265 585,285 565,287" fill="#e3f2fd" stroke="#90caf9" stroke-width="1" opacity="0.7"/>
+  <polygon points="640,275 655,272 658,290 642,291" fill="#e3f2fd" stroke="#90caf9" stroke-width="1" opacity="0.5"/>
+  <!-- Crack lines on main ice -->
+  <path d="M180 200 L200 240 L190 280" stroke="#64b5f6" stroke-width="2" fill="none"/>
+  <path d="M200 240 L230 260" stroke="#64b5f6" stroke-width="1.5" fill="none"/>
+  <!-- Arrow showing retreat -->
+  <path d="M350 230 L680 260" stroke="#ef5350" stroke-width="3" stroke-dasharray="8,6" opacity="0.7"/>
+  <polygon points="680,260 665,250 668,268" fill="#ef5350" opacity="0.7"/>
+  <!-- Stats -->
+  <text x="400" y="50" font-family="Arial,sans-serif" font-size="20" fill="#ef9a9a" text-anchor="middle" font-weight="bold">3.41 million km² — Record Low</text>
+  <!-- Title -->
+  <text x="400" y="380" font-family="Arial,sans-serif" font-size="18" fill="#bbdefb" text-anchor="middle" font-weight="600" opacity="0.9">Arctic · September 2012</text>
+</svg>

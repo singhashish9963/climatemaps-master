@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="hot-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d84315"/>
+      <stop offset="50%" stop-color="#ff6e40"/>
+      <stop offset="100%" stop-color="#ffab91"/>
+    </linearGradient>
+    <linearGradient id="tundra" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c8a5e"/>
+      <stop offset="100%" stop-color="#6b7a4e"/>
+    </linearGradient>
+    <radialGradient id="fire-glow" cx="50%" cy="70%" r="50%">
+      <stop offset="0%" stop-color="#ff6f00" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#ff8f00" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ff8f00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#hot-sky)"/>
+  <!-- Hot sun -->
+  <circle cx="650" cy="80" r="60" fill="#fff176" opacity="0.9"/>
+  <circle cx="650" cy="80" r="80" fill="#fff176" opacity="0.2"/>
+  <!-- Tundra ground -->
+  <rect y="280" width="800" height="120" fill="url(#tundra)"/>
+  <!-- Permafrost cracks (thawing) -->
+  <path d="M100 300 L120 330 M120 330 L110 360 M120 330 L140 350" stroke="#4e342e" stroke-width="2" fill="none"/>
+  <path d="M350 290 L365 320 M365 320 L355 350 M365 320 L385 345" stroke="#4e342e" stroke-width="2" fill="none"/>
+  <!-- Wildfires -->
+  <g>
+    <!-- Fire 1 -->
+    <ellipse cx="180" cy="275" rx="40" ry="30" fill="url(#fire-glow)"/>
+    <path d="M170 280 Q175 250 180 260 Q185 240 190 255 Q195 235 200 260 Q205 245 195 280" fill="#ff6f00" opacity="0.9"/>
+    <path d="M175 280 Q178 260 183 268 Q186 252 190 265 Q193 248 188 280" fill="#ffab00" opacity="0.8"/>
+    <!-- Fire 2 -->
+    <ellipse cx="500" cy="270" rx="50" ry="35" fill="url(#fire-glow)"/>
+    <path d="M485 275 Q490 240 498 255 Q505 225 512 250 Q518 230 522 255 Q528 240 520 275" fill="#ff6f00" opacity="0.9"/>
+    <path d="M492 275 Q496 250 502 262 Q507 240 513 258 Q517 243 512 275" fill="#ffab00" opacity="0.8"/>
+    <!-- Smoke -->
+    <ellipse cx="180" cy="230" rx="50" ry="25" fill="#757575" opacity="0.3"/>
+    <ellipse cx="500" cy="220" rx="60" ry="30" fill="#757575" opacity="0.3"/>
+    <ellipse cx="490" cy="180" rx="70" ry="25" fill="#9e9e9e" opacity="0.2"/>
+  </g>
+  <!-- Temperature record badge -->
+  <g transform="translate(40, 30)">
+    <rect x="0" y="0" width="140" height="70" rx="10" fill="#fff" opacity="0.9"/>
+    <text x="70" y="25" font-family="Arial,sans-serif" font-size="13" fill="#616161" text-anchor="middle" font-weight="600">Verkhoyansk</text>
+    <text x="70" y="52" font-family="Arial,sans-serif" font-size="26" fill="#d32f2f" text-anchor="middle" font-weight="bold">38°C</text>
+  </g>
+  <!-- Title -->
+  <text x="400" y="380" font-family="Arial,sans-serif" font-size="18" fill="#fff" text-anchor="middle" font-weight="600" opacity="0.9">Siberia · June 2020</text>
+</svg>

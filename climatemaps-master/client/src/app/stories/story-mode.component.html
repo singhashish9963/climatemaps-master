@@ -14,7 +14,12 @@
         [class.active]="i === selectedIndex"
         (click)="selectStory(i)"
       >
-        <span class="story-number">{{ i + 1 }}</span>
+        <img
+          class="story-thumb"
+          [src]="story.imageUrl"
+          [alt]="story.title"
+          loading="lazy"
+        />
         <div class="story-item-content">
           <span class="story-item-title">{{ story.title }}</span>
           <span class="story-item-meta">
@@ -42,18 +47,50 @@
     </div>
   </div>
 
-  <!-- Right: map + info overlay -->
+  <!-- Right: map/globe + info overlay -->
   <div class="story-map-panel">
+    <!-- View mode toggle -->
+    <div class="view-mode-toggle">
+      <mat-button-toggle-group
+        [value]="viewMode"
+        (change)="switchViewMode($event.value)"
+        hideSingleSelectionIndicator
+      >
+        <mat-button-toggle value="map">
+          <mat-icon>map</mat-icon>
+          <span class="toggle-label">Map</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="globe">
+          <mat-icon>public</mat-icon>
+          <span class="toggle-label">3D Globe</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <!-- Leaflet 2D map -->
     <div
       class="map-container"
+      [style.display]="viewMode === 'map' ? 'block' : 'none'"
       leaflet
       [leafletOptions]="mapOptions"
       (leafletMapReady)="onMapReady($event)"
     ></div>
 
+    <!-- Cesium 3D globe -->
+    <div
+      #cesiumContainer
+      class="globe-container"
+      [style.display]="viewMode === 'globe' ? 'block' : 'none'"
+    ></div>
+
     <!-- Info card overlay -->
     <div class="story-info-overlay" *ngIf="selectedStory">
       <mat-card class="story-info-card">
+        <img
+          class="story-hero-img"
+          [src]="selectedStory.imageUrl"
+          [alt]="selectedStory.title"
+        />
         <mat-card-header>
           <mat-card-title>{{ selectedStory.title }}</mat-card-title>
           <mat-card-subtitle>

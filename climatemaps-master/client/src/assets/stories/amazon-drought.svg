@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="hazy-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0a050"/>
+      <stop offset="60%" stop-color="#c0c0a0"/>
+      <stop offset="100%" stop-color="#9e9d24"/>
+    </linearGradient>
+    <linearGradient id="dried-river" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8d6e63"/>
+      <stop offset="50%" stop-color="#a1887f"/>
+      <stop offset="100%" stop-color="#8d6e63"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#hazy-sky)"/>
+  <!-- Smoke haze -->
+  <ellipse cx="200" cy="80" rx="180" ry="60" fill="#bdbdbd" opacity="0.3"/>
+  <ellipse cx="550" cy="100" rx="200" ry="50" fill="#bdbdbd" opacity="0.25"/>
+  <!-- Forest (withered trees) -->
+  <g opacity="0.9">
+    <!-- Tree 1 -->
+    <rect x="80" y="180" width="8" height="120" fill="#5d4037"/>
+    <path d="M84 180 L60 210 L75 200 L50 230 L70 220 L55 250 L84 220 L113 250 L98 220 L118 230 L93 200 L108 210 Z" fill="#827717"/>
+    <!-- Tree 2 -->
+    <rect x="180" y="160" width="8" height="140" fill="#5d4037"/>
+    <path d="M184 160 L155 195 L170 185 L148 218 L168 205 L150 240 L184 205 L218 240 L200 205 L220 218 L198 185 L213 195 Z" fill="#9e9d24"/>
+    <!-- Tree 3 - dead -->
+    <rect x="320" y="190" width="7" height="110" fill="#4e342e"/>
+    <path d="M323 190 L305 210 M323 200 L340 215 M323 210 L308 230 M323 220 L338 235" stroke="#5d4037" stroke-width="3" fill="none"/>
+    <!-- Tree 4 -->
+    <rect x="450" y="170" width="8" height="130" fill="#5d4037"/>
+    <path d="M454 170 L428 205 L442 195 L420 228 L440 215 L425 248 L454 215 L483 248 L468 215 L488 228 L466 195 L480 205 Z" fill="#827717"/>
+    <!-- Tree 5 - dead -->
+    <rect x="580" y="185" width="7" height="115" fill="#4e342e"/>
+    <path d="M583 185 L565 205 M583 195 L600 210 M583 205 L568 225 M583 215 L598 230" stroke="#5d4037" stroke-width="3" fill="none"/>
+    <!-- Tree 6 -->
+    <rect x="700" y="175" width="8" height="125" fill="#5d4037"/>
+    <path d="M704 175 L680 208 L693 198 L672 228 L692 216 L678 245 L704 214 L730 245 L716 216 L736 228 L715 198 L728 208 Z" fill="#9e9d24"/>
+  </g>
+  <!-- Dried riverbed -->
+  <path d="M0 330 Q100 310 200 330 Q300 350 400 325 Q500 300 600 330 Q700 355 800 335 L800 400 L0 400 Z" fill="url(#dried-river)"/>
+  <!-- Riverbed cracks -->
+  <path d="M150 350 L160 370 L155 390 M160 370 L175 380" stroke="#6d4c41" stroke-width="1.5" fill="none"/>
+  <path d="M400 340 L415 360 L405 385 M415 360 L430 370" stroke="#6d4c41" stroke-width="1.5" fill="none"/>
+  <path d="M600 345 L610 365 L605 390" stroke="#6d4c41" stroke-width="1.5" fill="none"/>
+  <!-- Fire glow -->
+  <circle cx="320" cy="260" r="30" fill="#ff6f00" opacity="0.3"/>
+  <circle cx="320" cy="260" r="15" fill="#ff8f00" opacity="0.5"/>
+  <!-- Title -->
+  <text x="400" y="385" font-family="Arial,sans-serif" font-size="18" fill="#fff" text-anchor="middle" font-weight="600" opacity="0.9">Amazon Basin · September 2005</text>
+</svg>

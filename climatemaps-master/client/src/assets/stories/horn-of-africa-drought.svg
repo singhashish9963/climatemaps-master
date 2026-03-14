@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="arid-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8d5a0"/>
+      <stop offset="50%" stop-color="#d7cba0"/>
+      <stop offset="100%" stop-color="#c2a868"/>
+    </linearGradient>
+    <linearGradient id="desert" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c9a35c"/>
+      <stop offset="100%" stop-color="#a88040"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#arid-sky)"/>
+  <!-- Blazing sun -->
+  <circle cx="400" cy="70" r="55" fill="#fff176" opacity="0.9"/>
+  <circle cx="400" cy="70" r="80" fill="#fff9c4" opacity="0.2"/>
+  <!-- Desert dunes -->
+  <path d="M0 260 Q100 230 200 250 Q300 270 400 240 Q500 210 600 250 Q700 280 800 250 L800 400 L0 400 Z" fill="url(#desert)"/>
+  <path d="M0 290 Q120 270 250 290 Q380 310 500 280 Q620 250 750 290 Q790 300 800 295 L800 400 L0 400 Z" fill="#b8924a" opacity="0.5"/>
+  <!-- Dried lake bed -->
+  <ellipse cx="400" cy="330" rx="150" ry="40" fill="#9e8040" stroke="#8d7030" stroke-width="1"/>
+  <!-- Cracks in lake bed -->
+  <path d="M340 320 L355 340 L345 355 M355 340 L370 350" stroke="#7d6030" stroke-width="1.5" fill="none"/>
+  <path d="M400 315 L410 338 L400 358 M410 338 L425 348" stroke="#7d6030" stroke-width="1.5" fill="none"/>
+  <path d="M450 325 L460 345 L452 360" stroke="#7d6030" stroke-width="1.5" fill="none"/>
+  <!-- Lone dead tree -->
+  <rect x="600" y="230" width="6" height="50" fill="#5d4037"/>
+  <path d="M603 230 L585 215 M603 238 L620 222 M603 245 L588 235 M603 250 L618 240" stroke="#5d4037" stroke-width="2.5" fill="none"/>
+  <!-- People silhouettes (humanitarian crisis) -->
+  <g fill="#5d4037" opacity="0.7">
+    <circle cx="150" cy="250" r="6"/>
+    <rect x="147" y="256" width="6" height="15" rx="2"/>
+    <circle cx="175" cy="252" r="5.5"/>
+    <rect x="172" y="258" width="6" height="14" rx="2"/>
+    <circle cx="195" cy="253" r="5"/>
+    <rect x="192.5" y="258" width="5" height="12" rx="2"/>
+  </g>
+  <!-- Crisis stat -->
+  <g transform="translate(30, 30)">
+    <rect x="0" y="0" width="160" height="70" rx="10" fill="#fff" opacity="0.85"/>
+    <text x="80" y="25" font-family="Arial,sans-serif" font-size="12" fill="#616161" text-anchor="middle" font-weight="600">People affected</text>
+    <text x="80" y="52" font-family="Arial,sans-serif" font-size="24" fill="#e53935" text-anchor="middle" font-weight="bold">13 million</text>
+  </g>
+  <!-- Title -->
+  <text x="400" y="385" font-family="Arial,sans-serif" font-size="18" fill="#5d4037" text-anchor="middle" font-weight="600" opacity="0.9">Horn of Africa · April 2011</text>
+</svg>

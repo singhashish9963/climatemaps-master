@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff6f00"/>
+      <stop offset="60%" stop-color="#ff8f00"/>
+      <stop offset="100%" stop-color="#ffe082"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="30%" r="30%">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="40%" stop-color="#ffee58"/>
+      <stop offset="100%" stop-color="#ff8f00" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a1887f"/>
+      <stop offset="100%" stop-color="#8d6e63"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#sky)"/>
+  <circle cx="400" cy="100" r="140" fill="url(#sun)"/>
+  <circle cx="400" cy="100" r="50" fill="#fff176"/>
+  <!-- Heat shimmer lines -->
+  <path d="M100 280 Q150 270 200 280 Q250 290 300 280 Q350 270 400 280 Q450 290 500 280 Q550 270 600 280 Q650 290 700 280" stroke="#ffcc80" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M50 300 Q100 290 150 300 Q200 310 250 300 Q300 290 350 300 Q400 310 450 300 Q500 290 550 300 Q600 310 650 300 Q700 290 750 300" stroke="#ffcc80" stroke-width="2" fill="none" opacity="0.4"/>
+  <!-- Dry ground -->
+  <rect y="320" width="800" height="80" fill="url(#ground)"/>
+  <!-- Cracks -->
+  <path d="M200 340 L220 360 L210 380 M220 360 L240 370" stroke="#6d4c41" stroke-width="2" fill="none"/>
+  <path d="M500 330 L510 355 L525 370 M510 355 L490 375" stroke="#6d4c41" stroke-width="2" fill="none"/>
+  <path d="M650 345 L665 365 L655 385 M665 365 L680 380" stroke="#6d4c41" stroke-width="2" fill="none"/>
+  <!-- Thermometer -->
+  <rect x="60" y="80" width="16" height="180" rx="8" fill="#fff" stroke="#424242" stroke-width="2"/>
+  <rect x="63" y="140" width="10" height="117" rx="5" fill="#e53935"/>
+  <circle cx="68" cy="270" r="18" fill="#e53935" stroke="#424242" stroke-width="2"/>
+  <!-- Temperature label -->
+  <text x="100" y="110" font-family="Arial,sans-serif" font-size="22" font-weight="bold" fill="#fff">40°C+</text>
+  <!-- Title -->
+  <text x="400" y="380" font-family="Arial,sans-serif" font-size="18" fill="#fff" text-anchor="middle" font-weight="600" opacity="0.9">Europe · August 2003</text>
+</svg>

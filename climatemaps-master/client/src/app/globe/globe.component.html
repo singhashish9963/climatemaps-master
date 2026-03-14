@@ -1,0 +1,125 @@
+<mat-sidenav-container class="globe-container">
+  <mat-sidenav
+    #sidenav
+    [mode]="isMobile ? 'over' : 'side'"
+    [(opened)]="sidebarOpened"
+    class="globe-sidebar"
+  >
+    <div class="sidebar-content">
+      <button
+        mat-icon-button
+        class="sidebar-close-button"
+        (click)="toggleSidebar()"
+        aria-label="Close sidebar"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <app-map-controls
+        [controlsData]="controlsData"
+        [controlsOptions]="controlsOptions"
+        [showDropDownControls]="true"
+        (controlsChange)="onControlsChange($event)"
+      ></app-map-controls>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="globe-content">
+    <!-- Sidebar toggle -->
+    <button
+      *ngIf="!sidebarOpened"
+      mat-icon-button
+      class="sidebar-toggle-button"
+      (click)="toggleSidebar()"
+      aria-label="Open sidebar"
+    >
+      <mat-icon>tune</mat-icon>
+    </button>
+
+    <!-- Zoom & Home controls -->
+    <div class="globe-nav-controls">
+      <button
+        mat-icon-button
+        class="nav-button"
+        (click)="zoomIn()"
+        aria-label="Zoom in"
+        title="Zoom in"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        class="nav-button"
+        (click)="zoomOut()"
+        aria-label="Zoom out"
+        title="Zoom out"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        class="nav-button"
+        (click)="resetView()"
+        aria-label="Reset view"
+        title="Reset view"
+      >
+        <mat-icon>public</mat-icon>
+      </button>
+    </div>
+
+    <!-- Globe container -->
+    <div #cesiumContainer class="cesium-viewer-container"></div>
+
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading climate data...</p>
+    </div>
+
+    <!-- Click tooltip -->
+    <ng-container *ngIf="clickTooltip as tip">
+      <div
+        class="globe-click-tooltip"
+        [style.left.px]="tip.screenX + 16"
+        [style.top.px]="tip.screenY - 20"
+      >
+        <button
+          class="tooltip-close"
+          (click)="dismissTooltip()"
+          aria-label="Close tooltip"
+        >
+          &times;
+        </button>
+        <div class="tooltip-value">
+          {{ tip.value }}
+          <span class="tooltip-unit">{{ tip.unit }}</span>
+        </div>
+        <div class="tooltip-city" *ngIf="tip.city">
+          {{ tip.city }}
+        </div>
+        <div class="tooltip-coords">
+          {{ tip.lat.toFixed(2) }}&deg;,
+          {{ tip.lon.toFixed(2) }}&deg;
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Info display -->
+    <div class="globe-info-display" *ngIf="controlsData.selectedYearRange">
+      <div class="info-value">
+        {{ climateVariables[controlsData.selectedVariableType].displayName }}
+        - {{ getMonthName(controlsData.selectedMonth) }}
+        {{ formatYearRange(controlsData.selectedYearRange.value) }}
+        <span *ngIf="shouldShowFutureControls()" class="prediction-indicator">
+          (Model Prediction)
+        </span>
+      </div>
+    </div>
+
+    <!-- Colorbar -->
+    <app-colorbar-json
+      [dataType]="selectedOption?.climateMap?.dataType || null"
+      [width]="isMobile ? 12 : 14"
+    ></app-colorbar-json>
+  </mat-sidenav-content>
+</mat-sidenav-container>

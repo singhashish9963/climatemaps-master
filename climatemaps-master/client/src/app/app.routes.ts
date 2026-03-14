@@ -97,6 +97,8 @@ export const getClimateVariableRoute = (variable: ClimateVarKey) => {
 
 export const routes: Routes = [
   { path: '', component: MapComponent },
+  { path: 'globe', loadComponent: () => import('./globe/globe.component').then(m => m.GlobeComponent) },
+  { path: 'compare', loadComponent: () => import('./compare/compare.component').then(m => m.CompareComponent) },
   { path: 'seasons', component: MonthlyGridComponent },
   { path: 'climate-scenarios', component: ScenarioGridComponent },
   { path: 'climate-predictions', component: YearRangeGridComponent },

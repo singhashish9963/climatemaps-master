@@ -117,6 +117,7 @@
           {{ tip.lat.toFixed(2) }}&deg;,
           {{ tip.lon.toFixed(2) }}&deg;
         </div>
+        <app-forecast-panel [lat]="tip.lat" [lon]="tip.lon"></app-forecast-panel>
       </div>
     </ng-container>
 

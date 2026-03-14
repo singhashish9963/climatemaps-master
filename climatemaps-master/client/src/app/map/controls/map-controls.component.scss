@@ -186,17 +186,17 @@
   .controls-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 0;
-    padding: 6px 12px;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    gap: 12px;
+    padding: 16px 16px;
+    margin-top: 24px;
+    margin-bottom: 16px;
   }
 
   .dropdown-field {
     min-width: unset;
     width: 100%;
     margin-right: 0;
-    margin-bottom: 2px;
+    margin-bottom: 0;
 
     // Compact outlined cards per field
     ::ng-deep .mdc-notched-outline__leading,
@@ -217,7 +217,7 @@
     ::ng-deep .mat-mdc-text-field-wrapper {
       background: #f8fafc !important;
       border-radius: 8px !important;
-      padding: 0 12px !important;
+      padding: 0 14px !important;
       transition: background 0.15s;
 
       &:hover {
@@ -241,7 +241,7 @@
     // Label — left-aligned, small caps
     ::ng-deep .mat-mdc-floating-label {
       font-family: 'Inter', system-ui, sans-serif !important;
-      font-size: 11px !important;
+      font-size: 13px !important;
       font-weight: 600 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.05em !important;
@@ -254,7 +254,7 @@
     // Value text — left-aligned
     ::ng-deep .mat-mdc-select-value-text {
       font-family: 'Inter', system-ui, sans-serif !important;
-      font-size: 13px !important;
+      font-size: 14px !important;
       font-weight: 500 !important;
       color: #0f172a !important;
     }
@@ -269,8 +269,8 @@
 
     // Field infix
     ::ng-deep .mat-mdc-form-field-infix {
-      padding-top: 8px !important;
-      padding-bottom: 8px !important;
+      padding-top: 14px !important;
+      padding-bottom: 14px !important;
       min-height: unset !important;
     }
   }

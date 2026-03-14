@@ -1,0 +1,73 @@
+.forecast-panel {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.forecast-header {
+  margin-bottom: 6px;
+}
+
+.forecast-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.forecast-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+
+  span {
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+}
+
+.forecast-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.forecast-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.forecast-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #475569;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.forecast-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.forecast-bar {
+  height: 100%;
+  border-radius: 3px;
+  min-width: 4px;
+  max-width: 100%;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.forecast-temp {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  width: 52px;
+  text-align: right;
+  flex-shrink: 0;
+}

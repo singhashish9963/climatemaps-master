@@ -1,0 +1,26 @@
+<div class="forecast-panel">
+  <div class="forecast-header">
+    <span class="forecast-title">24h Temperature Forecast</span>
+  </div>
+
+  <div *ngIf="isLoading" class="forecast-loading">
+    <mat-spinner diameter="20"></mat-spinner>
+    <span>Loading forecast…</span>
+  </div>
+
+  <div *ngIf="!isLoading" class="forecast-rows">
+    <div class="forecast-row" *ngFor="let point of forecastPoints">
+      <span class="forecast-label">{{ point.label }}</span>
+      <div class="forecast-bar-wrap">
+        <div
+          class="forecast-bar"
+          [style.width.%]="((point.tempCelsius + 20) / 60) * 100 | number:'1.0-0'"
+          [style.background]="getTempColor(point.tempCelsius)"
+        ></div>
+      </div>
+      <span class="forecast-temp" [style.color]="getTempColor(point.tempCelsius)">
+        {{ formatTemp(point.tempCelsius) }}&nbsp;&deg;C
+      </span>
+    </div>
+  </div>
+</div>

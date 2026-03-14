@@ -68,6 +68,7 @@ import {
 } from '../map/controls/map-controls.component';
 import { ColorbarJsonComponent } from '../map/colorbar-json.component';
 import { GlobeLayerService } from './services/globe-layer.service';
+import { ForecastPanelComponent } from './forecast/forecast-panel.component';
 import { ToastService } from '../core/toast.service';
 import { ClimateVariableHelperService } from '../core/climate-variable-helper.service';
 import { TemperatureUnitService, TemperatureUnit } from '../core/temperature-unit.service';
@@ -92,6 +93,7 @@ const MONTHS = [
     MatProgressSpinnerModule,
     MapControlsComponent,
     ColorbarJsonComponent,
+    ForecastPanelComponent,
   ],
   templateUrl: './globe.component.html',
   styleUrl: './globe.component.scss',

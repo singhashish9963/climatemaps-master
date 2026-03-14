@@ -31,7 +31,7 @@ import { ThemeService } from './core/theme.service';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  readonly title: string = 'OpenClimateMap';
+  readonly title: string = 'ClimateGO';
   isMobile = false;
 
   constructor(

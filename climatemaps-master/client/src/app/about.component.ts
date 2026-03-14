@@ -12,11 +12,11 @@ export class AboutComponent implements OnInit {
 
   ngOnInit(): void {
     this.seoService.updateMetaTags({
-      title: 'About OpenClimateMap - Climate Data Visualization Platform',
+      title: 'About ClimateGO - Climate Data Visualization Platform',
       description:
-        'Learn about OpenClimateMap, an open-source platform for visualizing global climate data including historical observations and CMIP6 future projections. Free climate maps for researchers, educators, and policy makers.',
+        'Learn about ClimateGO, an open-source platform for visualizing global climate data including historical observations and CMIP6 future projections. Free climate maps for researchers, educators, and policy makers.',
       keywords:
-        'about OpenClimateMap, climate data source, CMIP6, WorldClim, climate visualization, open source climate tool, climate research',
+        'about ClimateGO, climate data source, CMIP6, WorldClim, climate visualization, open source climate tool, climate research',
       url: '/about',
     });
   }

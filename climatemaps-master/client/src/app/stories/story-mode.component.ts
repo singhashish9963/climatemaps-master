@@ -140,7 +140,7 @@ export class StoryModeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.checkMobile();
     this.seoService.updateMetaTags({
-      title: 'Climate Stories - Guided Climate Tour | OpenClimateMap',
+      title: 'Climate Stories - Guided Climate Tour | ClimateGO',
       description:
         'Explore major climate events through an interactive guided tour. ' +
         'From the 2003 European heatwave to Arctic ice loss and Amazon droughts.',

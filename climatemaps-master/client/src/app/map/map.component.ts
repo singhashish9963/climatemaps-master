@@ -973,7 +973,7 @@ export class MapComponent extends BaseMapComponent implements OnInit {
       this.climateVariables?.[variableKey]?.displayName ||
       variable.toLowerCase();
 
-    const seoTitle = `${title} - OpenClimateMap`;
+    const seoTitle = `${title} - ClimateGO`;
     const description = `Explore interactive ${title.toLowerCase()} showing ${variableName.toLowerCase()} data. View historical and future climate projections with detailed temperature and precipitation maps.`;
     const keywords = `${title.toLowerCase()}, ${variableName.toLowerCase()}, climate map, temperature map, precipitation map, climate data, climate change, CMIP6, climate visualization`;
 

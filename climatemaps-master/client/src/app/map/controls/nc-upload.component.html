@@ -1,0 +1,84 @@
+<div class="nc-upload-container">
+  <!-- Hidden file input -->
+  <input
+    #fileInput
+    type="file"
+    accept=".nc"
+    style="display: none"
+    (change)="onFileSelected($event)"
+  />
+
+  <!-- Upload button (always visible) -->
+  <button
+    mat-mini-fab
+    class="nc-upload-btn"
+    (click)="onUploadButtonClick()"
+    [disabled]="isLoading"
+    matTooltip="Upload NetCDF (.nc) climate file"
+    matTooltipPosition="right"
+    aria-label="Upload NetCDF file"
+  >
+    <mat-icon *ngIf="!isLoading">upload_file</mat-icon>
+    <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+  </button>
+
+  <!-- Info panel shown after a successful upload -->
+  <div class="nc-info-panel" *ngIf="uploadData && !isLoading">
+    <div class="nc-panel-header">
+      <span class="nc-panel-title">
+        <mat-icon class="panel-icon">layers</mat-icon>
+        {{ uploadData.selected_variable }}
+        <span *ngIf="uploadData.unit" class="unit-label">({{ uploadData.unit }})</span>
+      </span>
+      <div class="header-actions">
+        <button mat-icon-button (click)="toggleCollapse()" [matTooltip]="isCollapsed ? 'Expand' : 'Collapse'">
+          <mat-icon>{{ isCollapsed ? 'expand_more' : 'expand_less' }}</mat-icon>
+        </button>
+        <button mat-icon-button (click)="removeOverlay()" matTooltip="Remove overlay" aria-label="Remove NC overlay">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="nc-panel-body" *ngIf="!isCollapsed">
+      <!-- Variable selector -->
+      <div class="nc-row" *ngIf="uploadData.variables.length > 1">
+        <label class="nc-label">Variable</label>
+        <mat-select
+          [(ngModel)]="selectedVariable"
+          (selectionChange)="onVariableChange()"
+          class="nc-select"
+        >
+          <mat-option *ngFor="let v of uploadData.variables" [value]="v">{{ v }}</mat-option>
+        </mat-select>
+      </div>
+
+      <!-- Value range -->
+      <div class="nc-row value-range">
+        <span class="range-label">Min: <strong>{{ formattedValueMin }}</strong></span>
+        <span class="range-sep">–</span>
+        <span class="range-label">Max: <strong>{{ formattedValueMax }}</strong></span>
+      </div>
+
+      <!-- Geographic bounds -->
+      <div class="nc-row bounds-info">
+        <mat-icon class="bounds-icon">crop_free</mat-icon>
+        <span>
+          Lat {{ uploadData.lat_min.toFixed(1) }}° – {{ uploadData.lat_max.toFixed(1) }}°,
+          Lon {{ uploadData.lon_min.toFixed(1) }}° – {{ uploadData.lon_max.toFixed(1) }}°
+        </span>
+      </div>
+
+      <div class="nc-hint">Click on map for point values</div>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div class="nc-error" *ngIf="errorMessage">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+    <button mat-icon-button (click)="errorMessage = null">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

@@ -106,6 +106,8 @@ export const routes: Routes = [
   { path: 'climate-matrix', component: ScenarioYearRangeGridComponent },
   { path: 'about', component: AboutComponent },
   { path: 'stories', component: StoryModeComponent },
+  { path: 'upload', loadComponent: () => import('./upload/upload.component').then(m => m.UploadComponent) },
+  { path: 'compare-nc', loadComponent: () => import('./compare-nc/compare-nc.component').then(m => m.CompareNcComponent) },
   // Climate variable routes for SEO - generated dynamically
   ...generateClimateVariableRoutes(),
 ];

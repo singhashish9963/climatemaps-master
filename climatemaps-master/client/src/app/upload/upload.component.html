@@ -1,0 +1,166 @@
+<div class="upload-page">
+  <!-- Hidden file input -->
+  <input
+    #fileInput
+    type="file"
+    accept=".nc"
+    style="display: none"
+    (change)="onFileSelected($event)"
+  />
+
+  <!-- Left panel - upload controls & info -->
+  <aside class="upload-sidebar" [class.collapsed]="isMobile && uploadData">
+    <h2 class="sidebar-title">
+      <mat-icon class="title-icon">cloud_upload</mat-icon>
+      Upload Climate Data
+    </h2>
+    <p class="sidebar-desc">
+      Upload a <strong>.nc</strong> (NetCDF) file to visualize climate data on the interactive map.
+      Drag &amp; drop or click below.
+    </p>
+
+    <!-- Drop zone -->
+    <div
+      class="drop-zone"
+      [class.drag-over]="isDragOver"
+      [class.has-data]="!!uploadData"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="onUploadButtonClick()"
+    >
+      <mat-icon *ngIf="!isLoading" class="drop-icon">
+        {{ uploadData ? 'check_circle' : 'upload_file' }}
+      </mat-icon>
+      <mat-spinner *ngIf="isLoading" diameter="36"></mat-spinner>
+      <span class="drop-text" *ngIf="!isLoading && !uploadData">
+        Drop .nc file here or click to browse
+      </span>
+      <span class="drop-text" *ngIf="!isLoading && uploadData">
+        {{ uploadData.selected_variable }} loaded — drop a new file to replace
+      </span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-banner" *ngIf="errorMessage">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage }}</span>
+      <button mat-icon-button (click)="errorMessage = null" aria-label="Dismiss">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Data info panel -->
+    <div class="data-panel" *ngIf="uploadData && !isLoading">
+      <mat-divider></mat-divider>
+
+      <h3 class="section-title">Dataset Info</h3>
+
+      <!-- Variable selector -->
+      <div class="control-row" *ngIf="uploadData.variables.length > 1">
+        <label>Variable</label>
+        <mat-select
+          [(ngModel)]="selectedVariable"
+          (selectionChange)="onVariableChange()"
+          class="var-select"
+        >
+          <mat-option *ngFor="let v of uploadData.variables" [value]="v">{{ v }}</mat-option>
+        </mat-select>
+      </div>
+
+      <!-- Time step -->
+      <div class="control-row" *ngIf="uploadData.time_steps > 1">
+        <label>Time Step</label>
+        <mat-slider
+          [min]="0"
+          [max]="uploadData.time_steps - 1"
+          [step]="1"
+          discrete
+        >
+          <input matSliderThumb
+            [(ngModel)]="selectedTimeIndex"
+            (valueChange)="onTimeIndexChange()" />
+        </mat-slider>
+        <span class="step-label">{{ selectedTimeIndex + 1 }} / {{ uploadData.time_steps }}</span>
+      </div>
+
+      <!-- Opacity slider -->
+      <div class="control-row">
+        <label>Opacity</label>
+        <mat-slider [min]="0" [max]="1" [step]="0.05">
+          <input matSliderThumb
+            [ngModel]="overlayOpacity"
+            (valueChange)="onOpacityChange($event)" />
+        </mat-slider>
+        <span class="step-label">{{ (overlayOpacity * 100).toFixed(0) }}%</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Variable</span>
+          <span class="stat-value">{{ uploadData.selected_variable }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Unit</span>
+          <span class="stat-value">{{ uploadData.unit || '—' }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Min</span>
+          <span class="stat-value">{{ uploadData.value_min.toFixed(2) }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Max</span>
+          <span class="stat-value">{{ uploadData.value_max.toFixed(2) }}</span>
+        </div>
+        <div class="stat-card wide">
+          <span class="stat-label">Latitude</span>
+          <span class="stat-value">{{ uploadData.lat_min.toFixed(1) }}° – {{ uploadData.lat_max.toFixed(1) }}°</span>
+        </div>
+        <div class="stat-card wide">
+          <span class="stat-label">Longitude</span>
+          <span class="stat-value">{{ uploadData.lon_min.toFixed(1) }}° – {{ uploadData.lon_max.toFixed(1) }}°</span>
+        </div>
+      </div>
+
+      <button mat-stroked-button color="warn" class="clear-btn" (click)="clearAll()">
+        <mat-icon>delete_outline</mat-icon>
+        Clear Overlay
+      </button>
+    </div>
+  </aside>
+
+  <!-- Right panel - Map -->
+  <main class="map-container">
+    <div
+      class="map"
+      leaflet
+      [leafletOptions]="mapOptions"
+      (leafletMapReady)="onMapReady($event)"
+      (leafletClick)="onMapClick($event)"
+    ></div>
+
+    <!-- Point value popup -->
+    <div class="point-value-card" *ngIf="pointValue || queryingPoint">
+      <mat-spinner *ngIf="queryingPoint" diameter="16"></mat-spinner>
+      <div *ngIf="pointValue && !queryingPoint">
+        <div class="pv-header">
+          <mat-icon>place</mat-icon>
+          <span>{{ pointValue.latitude.toFixed(4) }}°, {{ pointValue.longitude.toFixed(4) }}°</span>
+        </div>
+        <div class="pv-value">
+          <strong>{{ pointValue.variable }}</strong>:
+          {{ pointValue.value.toFixed(3) }}
+          <span class="pv-unit" *ngIf="pointValue.unit">{{ pointValue.unit }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help hint -->
+    <div class="map-hint" *ngIf="uploadData && !pointValue && !queryingPoint">
+      Click on the map to query a data value
+    </div>
+  </main>
+</div>

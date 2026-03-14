@@ -13,3 +13,6 @@ uvicorn>=0.37.0
 citipy>=0.0.6
 pycountry>=24.6.1
 geopy>=2.4.1
+xarray>=2024.1.0
+netCDF4>=1.7.0
+python-multipart>=0.0.9

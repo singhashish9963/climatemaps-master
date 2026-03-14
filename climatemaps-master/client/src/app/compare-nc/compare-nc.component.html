@@ -1,0 +1,298 @@
+<div class="compare-nc-page">
+  <!-- Hidden file inputs -->
+  <input #fileInputA type="file" accept=".nc" style="display: none" (change)="onFileSelected($event, 'A')" />
+  <input #fileInputB type="file" accept=".nc" style="display: none" (change)="onFileSelected($event, 'B')" />
+
+  <!-- Top control bar -->
+  <div class="control-bar">
+    <div class="control-bar-left">
+      <mat-icon class="bar-icon">compare_arrows</mat-icon>
+      <span class="bar-title">Compare NetCDF Files</span>
+    </div>
+
+    <div class="control-bar-center">
+      <mat-button-toggle-group
+        [value]="viewMode"
+        (change)="onViewModeChange($event.value)"
+        class="view-toggle"
+      >
+        <mat-button-toggle value="map">
+          <mat-icon>map</mat-icon>
+          <span class="toggle-label">Map</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="globe">
+          <mat-icon>public</mat-icon>
+          <span class="toggle-label">Globe</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="control-bar-right">
+      <label class="opacity-control">
+        <span>Opacity</span>
+        <mat-slider [min]="0" [max]="1" [step]="0.05" class="opacity-slider">
+          <input matSliderThumb [ngModel]="overlayOpacity" (valueChange)="onOpacityChange($event)" />
+        </mat-slider>
+        <span class="opacity-value">{{ (overlayOpacity * 100).toFixed(0) }}%</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Side-by-side panels -->
+  <div class="panels-container">
+    <!-- Panel A -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label panel-a-label">A</span>
+        <span class="panel-filename" *ngIf="panelA.file">{{ panelA.file.name }}</span>
+        <span class="panel-placeholder" *ngIf="!panelA.file">No file loaded</span>
+        <button mat-icon-button *ngIf="panelA.data" (click)="clearPanel('A')" matTooltip="Clear"
+          class="panel-clear-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <!-- Drop zone (shown when no data) -->
+        <div
+          class="drop-zone"
+          *ngIf="!panelA.data && !panelA.isLoading"
+          [class.drag-over]="panelA.isDragOver"
+          (dragover)="onDragOver($event, 'A')"
+          (dragleave)="onDragLeave($event, 'A')"
+          (drop)="onDrop($event, 'A')"
+          (click)="onUploadClick('A')"
+        >
+          <mat-icon class="drop-icon">upload_file</mat-icon>
+          <span class="drop-text">Drop .nc file here<br />or click to browse</span>
+        </div>
+
+        <!-- Loading spinner -->
+        <div class="loading-overlay" *ngIf="panelA.isLoading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span>Processing…</span>
+        </div>
+
+        <!-- Error -->
+        <div class="panel-error" *ngIf="panelA.error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ panelA.error }}</span>
+        </div>
+
+        <!-- Map view -->
+        <div
+          class="map-wrapper"
+          *ngIf="viewMode === 'map'"
+          [class.hidden]="!panelA.data && !panelA.isLoading"
+        >
+          <div
+            class="leaflet-map"
+            leaflet
+            [leafletOptions]="mapOptionsA"
+            (leafletMapReady)="onMapReadyA($event)"
+          ></div>
+        </div>
+
+        <!-- Globe view -->
+        <div
+          class="globe-wrapper"
+          *ngIf="viewMode === 'globe'"
+        >
+          <div #globeContainerA class="cesium-container"></div>
+          <!-- Drop zone overlay for globe -->
+          <div
+            class="drop-zone globe-drop-overlay"
+            *ngIf="!panelA.data && !panelA.isLoading"
+            [class.drag-over]="panelA.isDragOver"
+            (dragover)="onDragOver($event, 'A')"
+            (dragleave)="onDragLeave($event, 'A')"
+            (drop)="onDrop($event, 'A')"
+            (click)="onUploadClick('A')"
+          >
+            <mat-icon class="drop-icon">upload_file</mat-icon>
+            <span class="drop-text">Drop .nc file here<br />or click to browse</span>
+          </div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar" *ngIf="panelA.data && !panelA.isLoading">
+          <div class="stat-item">
+            <span class="stat-key">Var</span>
+            <span class="stat-val">{{ panelA.data.selected_variable }}</span>
+          </div>
+          <div class="stat-item" *ngIf="panelA.data.unit">
+            <span class="stat-key">Unit</span>
+            <span class="stat-val">{{ panelA.data.unit }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-key">Min</span>
+            <span class="stat-val">{{ panelA.data.value_min.toFixed(1) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-key">Max</span>
+            <span class="stat-val">{{ panelA.data.value_max.toFixed(1) }}</span>
+          </div>
+        </div>
+
+        <!-- Variable selector (if multiple variables) -->
+        <div class="var-controls" *ngIf="panelA.data && panelA.data.variables.length > 1">
+          <mat-select
+            [(ngModel)]="panelA.selectedVariable"
+            (selectionChange)="onVariableChange('A')"
+            class="var-select"
+            placeholder="Variable"
+          >
+            <mat-option *ngFor="let v of panelA.data.variables" [value]="v">{{ v }}</mat-option>
+          </mat-select>
+        </div>
+
+        <!-- Time step selector -->
+        <div class="var-controls" *ngIf="panelA.data && panelA.data.time_steps > 1">
+          <label>Step {{ panelA.selectedTimeIndex + 1 }}/{{ panelA.data.time_steps }}</label>
+          <mat-slider [min]="0" [max]="panelA.data.time_steps - 1" [step]="1" discrete class="time-slider">
+            <input matSliderThumb [(ngModel)]="panelA.selectedTimeIndex" (valueChange)="onTimeIndexChange('A')" />
+          </mat-slider>
+        </div>
+
+        <!-- Re-upload button -->
+        <button
+          mat-stroked-button
+          *ngIf="panelA.data"
+          (click)="onUploadClick('A')"
+          class="replace-btn"
+        >
+          <mat-icon>swap_horiz</mat-icon> Replace File
+        </button>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="panel-divider"></div>
+
+    <!-- Panel B -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label panel-b-label">B</span>
+        <span class="panel-filename" *ngIf="panelB.file">{{ panelB.file.name }}</span>
+        <span class="panel-placeholder" *ngIf="!panelB.file">No file loaded</span>
+        <button mat-icon-button *ngIf="panelB.data" (click)="clearPanel('B')" matTooltip="Clear"
+          class="panel-clear-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <!-- Drop zone -->
+        <div
+          class="drop-zone"
+          *ngIf="!panelB.data && !panelB.isLoading"
+          [class.drag-over]="panelB.isDragOver"
+          (dragover)="onDragOver($event, 'B')"
+          (dragleave)="onDragLeave($event, 'B')"
+          (drop)="onDrop($event, 'B')"
+          (click)="onUploadClick('B')"
+        >
+          <mat-icon class="drop-icon">upload_file</mat-icon>
+          <span class="drop-text">Drop .nc file here<br />or click to browse</span>
+        </div>
+
+        <!-- Loading spinner -->
+        <div class="loading-overlay" *ngIf="panelB.isLoading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span>Processing…</span>
+        </div>
+
+        <!-- Error -->
+        <div class="panel-error" *ngIf="panelB.error">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ panelB.error }}</span>
+        </div>
+
+        <!-- Map view -->
+        <div
+          class="map-wrapper"
+          *ngIf="viewMode === 'map'"
+          [class.hidden]="!panelB.data && !panelB.isLoading"
+        >
+          <div
+            class="leaflet-map"
+            leaflet
+            [leafletOptions]="mapOptionsB"
+            (leafletMapReady)="onMapReadyB($event)"
+          ></div>
+        </div>
+
+        <!-- Globe view -->
+        <div
+          class="globe-wrapper"
+          *ngIf="viewMode === 'globe'"
+        >
+          <div #globeContainerB class="cesium-container"></div>
+          <!-- Drop zone overlay for globe -->
+          <div
+            class="drop-zone globe-drop-overlay"
+            *ngIf="!panelB.data && !panelB.isLoading"
+            [class.drag-over]="panelB.isDragOver"
+            (dragover)="onDragOver($event, 'B')"
+            (dragleave)="onDragLeave($event, 'B')"
+            (drop)="onDrop($event, 'B')"
+            (click)="onUploadClick('B')"
+          >
+            <mat-icon class="drop-icon">upload_file</mat-icon>
+            <span class="drop-text">Drop .nc file here<br />or click to browse</span>
+          </div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar" *ngIf="panelB.data && !panelB.isLoading">
+          <div class="stat-item">
+            <span class="stat-key">Var</span>
+            <span class="stat-val">{{ panelB.data.selected_variable }}</span>
+          </div>
+          <div class="stat-item" *ngIf="panelB.data.unit">
+            <span class="stat-key">Unit</span>
+            <span class="stat-val">{{ panelB.data.unit }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-key">Min</span>
+            <span class="stat-val">{{ panelB.data.value_min.toFixed(1) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-key">Max</span>
+            <span class="stat-val">{{ panelB.data.value_max.toFixed(1) }}</span>
+          </div>
+        </div>
+
+        <!-- Variable selector -->
+        <div class="var-controls" *ngIf="panelB.data && panelB.data.variables.length > 1">
+          <mat-select
+            [(ngModel)]="panelB.selectedVariable"
+            (selectionChange)="onVariableChange('B')"
+            class="var-select"
+            placeholder="Variable"
+          >
+            <mat-option *ngFor="let v of panelB.data.variables" [value]="v">{{ v }}</mat-option>
+          </mat-select>
+        </div>
+
+        <!-- Time step selector -->
+        <div class="var-controls" *ngIf="panelB.data && panelB.data.time_steps > 1">
+          <label>Step {{ panelB.selectedTimeIndex + 1 }}/{{ panelB.data.time_steps }}</label>
+          <mat-slider [min]="0" [max]="panelB.data.time_steps - 1" [step]="1" discrete class="time-slider">
+            <input matSliderThumb [(ngModel)]="panelB.selectedTimeIndex" (valueChange)="onTimeIndexChange('B')" />
+          </mat-slider>
+        </div>
+
+        <!-- Re-upload button -->
+        <button
+          mat-stroked-button
+          *ngIf="panelB.data"
+          (click)="onUploadClick('B')"
+          class="replace-btn"
+        >
+          <mat-icon>swap_horiz</mat-icon> Replace File
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

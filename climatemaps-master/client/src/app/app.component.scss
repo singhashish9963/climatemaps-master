@@ -58,3 +58,15 @@ mat-toolbar {
   align-items: center;
   gap: 8px;
 }
+
+.upload-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  .tab-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}

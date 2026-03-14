@@ -1,8 +1,19 @@
 from typing import List, Optional
 import time
+import io
+import base64
+import uuid
+import os
+import tempfile
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -15,6 +26,7 @@ from climatemaps.config import ClimateMap
 from climatemaps.settings import settings
 from climatemaps.datasets import ClimateDifferenceDataConfig
 from climatemaps.data import load_climate_data, load_climate_data_for_difference
+from climatemaps.geogrid import GeoGrid
 
 from .middleware import RateLimitMiddleware
 from .cache import GeoGridCache
@@ -244,3 +256,249 @@ def _is_city_country_or_town_photon(properties: dict) -> bool:
     ]
 
     return location_type in allowed_types
+
+
+# ── In-memory store for uploaded .nc datasets ─────────────────────────────────
+# Maps upload_id  →  {"geo_grid": GeoGrid, "variable": str, "unit": str}
+_nc_upload_store: dict = {}
+
+_VARIABLE_COLORMAPS: dict = {
+    # temperature-like
+    "tas": "RdYlBu_r", "tasmax": "RdYlBu_r", "tasmin": "RdYlBu",
+    "tmax": "RdYlBu_r", "tmin": "RdYlBu", "tmp": "RdYlBu_r", "t2m": "RdYlBu_r",
+    # precipitation
+    "pr": "YlGnBu", "pre": "YlGnBu", "prcp": "YlGnBu", "ppt": "YlGnBu", "tp": "YlGnBu",
+    # wind
+    "sfcwind": "PuBuGn", "wind": "PuBuGn", "u10": "PuBuGn", "v10": "PuBuGn",
+    # humidity / cloud
+    "hurs": "Blues", "clt": "Greys",
+}
+
+
+def _choose_colormap(variable: str) -> str:
+    key = variable.lower()
+    return _VARIABLE_COLORMAPS.get(key, "viridis")
+
+
+class NcUploadResponse(BaseModel):
+    upload_id: str
+    variables: list[str]
+    selected_variable: str
+    unit: str
+    time_steps: int
+    lat_min: float
+    lat_max: float
+    lon_min: float
+    lon_max: float
+    value_min: float
+    value_max: float
+    image_base64: str
+
+
+class NcValueResponse(BaseModel):
+    upload_id: str
+    variable: str
+    latitude: float
+    longitude: float
+    value: float
+    unit: str
+
+
+def _cell_extent(coords: np.ndarray) -> tuple[float, float]:
+    """Return (min_edge, max_edge) expanding by half a grid-cell on each side."""
+    if len(coords) >= 2:
+        half = abs(float(coords[1] - coords[0])) / 2.0
+    else:
+        half = 0.5
+    return float(coords.min()) - half, float(coords.max()) + half
+
+
+def _render_nc_image(
+    values: np.ndarray, lons: np.ndarray, lats: np.ndarray, cmap_name: str,
+    lon_extent: tuple[float, float] | None = None,
+    lat_extent: tuple[float, float] | None = None,
+) -> str:
+    """Render a 2-D array as a transparent PNG and return a data-URI."""
+    masked = np.ma.masked_invalid(values)
+    cmap = plt.cm.get_cmap(cmap_name).copy()
+    cmap.set_bad(alpha=0.0)
+
+    lon_min, lon_max = lon_extent or (float(lons.min()), float(lons.max()))
+    lat_min, lat_max = lat_extent or (float(lats.min()), float(lats.max()))
+
+    fig, ax = plt.subplots(1, 1, figsize=(18, 9))
+    fig.patch.set_alpha(0)
+    ax.patch.set_alpha(0)
+    ax.imshow(
+        masked,
+        extent=[lon_min, lon_max, lat_min, lat_max],
+        origin="upper",
+        cmap=cmap,
+        aspect="auto",
+        interpolation="bilinear",
+    )
+    ax.set_xlim(lon_min, lon_max)
+    ax.set_ylim(lat_min, lat_max)
+    ax.axis("off")
+    ax.set_position([0, 0, 1, 1])
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", pad_inches=0, transparent=True, dpi=150)
+    plt.close(fig)
+    buf.seek(0)
+    return "data:image/png;base64," + base64.b64encode(buf.read()).decode()
+
+
+@api.post("/upload-nc", response_model=NcUploadResponse)
+async def upload_nc_file(
+    file: UploadFile = File(...),
+    variable: Optional[str] = Form(default=None),
+    time_index: int = Form(default=0),
+):
+    """Accept a NetCDF (.nc) file, render it as a map overlay, and return metadata."""
+    if not file.filename or not file.filename.lower().endswith(".nc"):
+        raise HTTPException(status_code=400, detail="Only .nc (NetCDF) files are accepted.")
+
+    content = await file.read()
+    if len(content) > 200 * 1024 * 1024:  # 200 MB hard cap
+        raise HTTPException(status_code=413, detail="File too large (max 200 MB).")
+
+    tmp_path = None
+    try:
+        import xarray as xr
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
+
+        ds = xr.open_dataset(tmp_path, mask_and_scale=True)
+
+        # ── Locate lat/lon coordinates ────────────────────────────────────────
+        lat_candidates = ["lat", "latitude", "y", "nav_lat", "rlat", "ylat"]
+        lon_candidates = ["lon", "longitude", "x", "nav_lon", "rlon", "xlon"]
+        lat_name = next((c for c in lat_candidates if c in ds.coords), None)
+        lon_name = next((c for c in lon_candidates if c in ds.coords), None)
+
+        if lat_name is None or lon_name is None:
+            raise HTTPException(
+                status_code=422,
+                detail="Cannot find latitude/longitude coordinates in this NetCDF file.",
+            )
+
+        # ── Discover data variables (exclude coord-like dims) ─────────────────
+        coord_names = {lat_name, lon_name, "time", "lev", "level", "plev", "depth", "bnds", "bounds"}
+        data_vars = [v for v in ds.data_vars if v not in coord_names]
+        if not data_vars:
+            raise HTTPException(status_code=422, detail="No data variables found in NetCDF file.")
+
+        selected_var = variable if (variable and variable in ds.data_vars) else data_vars[0]
+
+        da = ds[selected_var]
+
+        # ── Handle extra dimensions (time, level, …) ─────────────────────────
+        time_dim = next((d for d in da.dims if d in ["time", "t"]), None)
+        time_steps = int(da.sizes[time_dim]) if time_dim else 1
+        safe_time_index = max(0, min(time_index, time_steps - 1))
+
+        # Drop all dims except lat/lon
+        extra_dims = [d for d in da.dims if d not in [lat_name, lon_name]]
+        if time_dim and time_dim in extra_dims:
+            da = da.isel({time_dim: safe_time_index})
+            extra_dims = [d for d in extra_dims if d != time_dim]
+        for d in extra_dims:
+            da = da.isel({d: 0})
+
+        lats = ds[lat_name].values.astype(float)
+        lons = ds[lon_name].values.astype(float)
+        values: np.ndarray = da.values.astype(float)
+
+        # ── Ensure lat array is decreasing (north → south) ───────────────────
+        if lats.ndim == 1 and lats[0] < lats[-1]:
+            lats = lats[::-1]
+            values = values[::-1, :]
+
+        # ── Convert 0-360 longitude to -180-180 if needed ────────────────────
+        if lons.ndim == 1 and float(lons.max()) > 180:
+            shift_idx = int(np.searchsorted(lons, 180.0))
+            lons = np.concatenate([lons[shift_idx:] - 360, lons[:shift_idx]])
+            values = np.concatenate([values[:, shift_idx:], values[:, :shift_idx]], axis=1)
+
+        if lons.ndim != 1 or lats.ndim != 1:
+            raise HTTPException(status_code=422, detail="Only regular (1-D lat/lon) grids are supported.")
+
+        if values.ndim != 2 or values.shape != (len(lats), len(lons)):
+            raise HTTPException(
+                status_code=422,
+                detail=f"Unexpected array shape {values.shape} for lat={len(lats)}, lon={len(lons)}.",
+            )
+
+        unit = str(da.attrs.get("units", ""))
+        cmap_name = _choose_colormap(selected_var)
+
+        lon_extent = _cell_extent(lons)
+        lat_extent = _cell_extent(lats)
+        image_b64 = _render_nc_image(values, lons, lats, cmap_name, lon_extent, lat_extent)
+
+        # ── Store grid for point-value queries ────────────────────────────────
+        geo_grid = GeoGrid(
+            lon_range=lons,
+            lat_range=lats,
+            values=values,
+        )
+
+        upload_id = str(uuid.uuid4())
+        _nc_upload_store[upload_id] = {"geo_grid": geo_grid, "variable": selected_var, "unit": unit}
+
+        # Prevent unbounded growth (keep at most 20 uploads)
+        if len(_nc_upload_store) > 20:
+            oldest = next(iter(_nc_upload_store))
+            del _nc_upload_store[oldest]
+
+        ds.close()
+
+        return NcUploadResponse(
+            upload_id=upload_id,
+            variables=data_vars,
+            selected_variable=selected_var,
+            unit=unit,
+            time_steps=time_steps,
+            lat_min=lat_extent[0],
+            lat_max=lat_extent[1],
+            lon_min=lon_extent[0],
+            lon_max=lon_extent[1],
+            value_min=float(np.nanmin(values)),
+            value_max=float(np.nanmax(values)),
+            image_base64=image_b64,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process NetCDF file: {str(e)}")
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+
+
+@api.get("/nc-value/{upload_id}", response_model=NcValueResponse)
+def get_nc_point_value(upload_id: str, lat: float, lon: float):
+    """Return the interpolated value at (lat, lon) for a previously uploaded .nc dataset."""
+    if upload_id not in _nc_upload_store:
+        raise HTTPException(status_code=404, detail="Upload not found or has expired.")
+
+    entry = _nc_upload_store[upload_id]
+    geo_grid: GeoGrid = entry["geo_grid"]
+
+    try:
+        value = geo_grid.get_value_at_coordinate(lon, lat)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return NcValueResponse(
+        upload_id=upload_id,
+        variable=entry["variable"],
+        latitude=lat,
+        longitude=lon,
+        value=value,
+        unit=entry["unit"],
+    )

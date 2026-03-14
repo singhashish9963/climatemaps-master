@@ -117,7 +117,7 @@
           {{ tip.lat.toFixed(2) }}&deg;,
           {{ tip.lon.toFixed(2) }}&deg;
         </div>
-        <app-forecast-panel [lat]="tip.lat" [lon]="tip.lon"></app-forecast-panel>
+        <app-forecast-panel *ngIf="tip.rawCelsius !== null && isTemperatureSelected" [lat]="tip.lat" [lon]="tip.lon" [currentTemp]="tip.rawCelsius"></app-forecast-panel>
       </div>
     </ng-container>
 
@@ -125,8 +125,6 @@
     <div class="globe-info-display" *ngIf="controlsData.selectedYearRange">
       <div class="info-value">
         {{ climateVariables[controlsData.selectedVariableType].displayName }}
-        - {{ getMonthName(controlsData.selectedMonth) }}
-        {{ formatYearRange(controlsData.selectedYearRange.value) }}
         <span *ngIf="shouldShowFutureControls()" class="prediction-indicator">
           (Model Prediction)
         </span>

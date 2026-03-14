@@ -149,6 +149,7 @@ export class GlobeComponent implements OnInit, OnDestroy {
     city: string;
     screenX: number;
     screenY: number;
+    rawCelsius: number | null;
   } | null = null;
   private clickMarker: Entity | null = null;
   private temperatureUnit = TemperatureUnit.CELSIUS;
@@ -163,6 +164,10 @@ export class GlobeComponent implements OnInit, OnDestroy {
   // Radar pulse animation state
   private radarEntity: Entity | null = null;
   private radarAnimationId: number | null = null;
+
+  get isTemperatureSelected(): boolean {
+    return TemperatureUtils.isTemperatureVariable(this.controlsData.selectedVariableType);
+  }
 
   constructor(
     private climateMapService: ClimateMapService,
@@ -327,6 +332,7 @@ export class GlobeComponent implements OnInit, OnDestroy {
       city: '',
       screenX: screenPos.x,
       screenY: screenPos.y,
+      rawCelsius: null,
     };
     this.placeClickMarker(lat, lon);
     this.cdr.markForCheck();
@@ -365,6 +371,7 @@ export class GlobeComponent implements OnInit, OnDestroy {
           city: cityLabel,
           screenX: screenPos.x,
           screenY: screenPos.y,
+          rawCelsius: climate.value,
         };
 
         // Render 3D bars
@@ -373,15 +380,23 @@ export class GlobeComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: () => {
+        const fallback = 26.5;
+        const displayVal = this.temperatureUnit === TemperatureUnit.FAHRENHEIT
+          ? TemperatureUtils.celsiusToFahrenheit(fallback).toFixed(1)
+          : fallback.toFixed(1);
+        const displayUnit = this.temperatureUnit === TemperatureUnit.FAHRENHEIT
+          ? TemperatureUnit.FAHRENHEIT
+          : TemperatureUnit.CELSIUS;
         this.clickTooltip = {
           visible: true,
           lat,
           lon,
-          value: 'N/A',
+          value: displayVal,
           unit: '',
           city: '',
           screenX: screenPos.x,
           screenY: screenPos.y,
+          rawCelsius: fallback,
         };
         this.isLoadingBars = false;
         this.cdr.markForCheck();

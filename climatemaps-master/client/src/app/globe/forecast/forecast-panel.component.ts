@@ -27,6 +27,7 @@ export interface ForecastPoint {
 export class ForecastPanelComponent implements OnChanges, OnDestroy {
   @Input() lat: number = 0;
   @Input() lon: number = 0;
+  @Input() currentTemp: number | null = null;
 
   isLoading = false;
   forecastPoints: ForecastPoint[] = [];
@@ -35,7 +36,7 @@ export class ForecastPanelComponent implements OnChanges, OnDestroy {
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['lat'] || changes['lon']) {
+    if (changes['lat'] || changes['lon'] || changes['currentTemp']) {
       this.triggerLoading();
     }
   }
@@ -58,12 +59,12 @@ export class ForecastPanelComponent implements OnChanges, OnDestroy {
   }
 
   private generateDummyForecast(): void {
-    const base = 15 + (Math.random() - 0.5) * 30;
+    const nowTemp = this.currentTemp ?? 15 + (Math.random() - 0.5) * 30;
     this.forecastPoints = [0, 12, 24].map((hours) => ({
       label: hours === 0 ? 'Now' : `+${hours}h`,
       offsetHours: hours,
       tempCelsius:
-        hours === 0 ? base : base + (Math.random() * 20 - 10),
+        hours === 0 ? nowTemp : nowTemp + (Math.random() * 10 - 5),
     }));
   }
 

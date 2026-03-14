@@ -21,5 +21,7 @@ RUN pip install --no-cache-dir .
 # Copy the rest of your FastAPI app
 COPY api/ ./api/
 
+EXPOSE 8000
+
 # 5. Run Uvicorn
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

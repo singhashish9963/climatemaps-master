@@ -21,5 +21,9 @@ RUN pip install --no-cache-dir .
 # Copy the rest of your FastAPI app
 COPY api/ ./api/
 
+# Copy raw data (worldclim NC files needed for value-at-click queries).
+# For large datasets, consider Railway volumes or omit worldclim/ if not needed.
+COPY data/raw ./data/raw
+
 # 5. Run Uvicorn
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

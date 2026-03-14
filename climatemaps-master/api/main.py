@@ -16,6 +16,7 @@ import matplotlib.colors as mcolors
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from citipy import citipy
 import pycountry
@@ -32,6 +33,21 @@ from .middleware import RateLimitMiddleware
 from .cache import GeoGridCache
 
 app = FastAPI()
+
+# CORS — read allowed origins from env var (comma-separated). Vercel domain must be added here.
+_raw_origins = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://localhost:4200,http://localhost:3000",
+)
+_allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 api = FastAPI()
 app.mount("/v1", api)

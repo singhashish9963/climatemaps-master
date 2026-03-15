@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/v1/:path*",
+      "destination": "https://openclimatemap.org/api/v1/:path*"
+    }
+  ]
+}

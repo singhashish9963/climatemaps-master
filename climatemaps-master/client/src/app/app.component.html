@@ -102,7 +102,7 @@
     <app-precipitation-unit-selector></app-precipitation-unit-selector>
     <p class="settings-label">Theme</p>
     <button class="settings-theme-btn" (click)="themeService.toggle()">
-      <mat-icon>{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      {{ themeService.theme() === 'dark' ? 'Switch to Light' : 'Switch to Dark' }}
+      <mat-icon>{{ themeService.theme() === 'light' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      {{ themeService.theme() === 'light' ? 'Switch to Light' : 'Switch to Dark' }}
     </button></div>
 </mat-menu>

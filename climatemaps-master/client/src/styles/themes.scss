@@ -78,6 +78,11 @@ body:not(.dark-theme) {
   --mdc-plain-tooltip-supporting-text-color: var(--text-primary);
   --mat-card-container-color: var(--card-bg);
   --mdc-slider-label-container-color: var(--primary-active);
+  --mat-standard-button-toggle-text-color: var(--text-primary);
+  --mat-standard-button-toggle-background-color: var(--bg-secondary);
+  --mat-standard-button-toggle-divider-color: var(--border-color);
+  --mat-standard-button-toggle-selected-state-text-color: var(--text-heading);
+  --mat-standard-button-toggle-selected-state-background-color: var(--bg-tertiary);
 }
 
 // ── Dark theme ──
@@ -159,4 +164,9 @@ body.dark-theme {
   --mdc-plain-tooltip-supporting-text-color: var(--text-primary);
   --mat-card-container-color: var(--card-bg);
   --mdc-slider-label-container-color: var(--primary-active);
+  --mat-standard-button-toggle-text-color: var(--text-primary);
+  --mat-standard-button-toggle-background-color: var(--bg-secondary);
+  --mat-standard-button-toggle-divider-color: var(--border-color);
+  --mat-standard-button-toggle-selected-state-text-color: var(--text-heading);
+  --mat-standard-button-toggle-selected-state-background-color: var(--bg-tertiary);
 }

@@ -22,10 +22,10 @@
   }
 
   .historical {
-    color: #4f46e5; // Indigo for historical data
+    color: var(--primary); // Indigo for historical data
   }
 
   .prediction {
-    color: #7c3aed; // Violet for predictions
+    color: var(--accent-purple); // Violet for predictions
   }
 }

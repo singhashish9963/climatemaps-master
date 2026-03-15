@@ -10,14 +10,14 @@
 }
 
 .nc-upload-btn {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  color: #475569 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
 
   &:hover:not(:disabled) {
-    background: #f8fafc !important;
-    color: #4f46e5 !important;
+    background: var(--bg-secondary) !important;
+    color: var(--primary) !important;
   }
 
   mat-spinner {
@@ -26,10 +26,10 @@
 }
 
 .nc-info-panel {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   min-width: 240px;
   max-width: 300px;
   overflow: hidden;
@@ -40,9 +40,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 4px 8px 12px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  color: #0f172a;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-heading);
 
   .nc-panel-title {
     display: flex;
@@ -59,13 +59,13 @@
       font-size: 16px;
       height: 16px;
       width: 16px;
-      color: #4f46e5;
+      color: var(--primary);
     }
 
     .unit-label {
       font-weight: 400;
       font-size: 11px;
-      color: #64748b;
+      color: var(--text-secondary);
     }
   }
 
@@ -73,7 +73,7 @@
     display: flex;
 
     button {
-      color: #475569;
+      color: var(--text-primary);
       width: 28px;
       height: 28px;
       line-height: 28px;
@@ -99,12 +99,12 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #333;
+  color: var(--text-primary);
 
   .nc-label {
     font-weight: 500;
     min-width: 56px;
-    color: #555;
+    color: var(--text-secondary);
   }
 
   .nc-select {
@@ -114,35 +114,35 @@
 }
 
 .value-range {
-  background: #f5f5f5;
+  background: var(--bg-secondary);
   border-radius: 4px;
   padding: 4px 8px;
   justify-content: space-between;
 
   .range-label {
-    color: #444;
+    color: var(--text-primary);
   }
 
   .range-sep {
-    color: #999;
+    color: var(--text-muted);
   }
 }
 
 .bounds-info {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 11px;
 
   .bounds-icon {
     font-size: 14px;
     height: 14px;
     width: 14px;
-    color: #888;
+    color: var(--text-muted);
   }
 }
 
 .nc-hint {
   font-size: 11px;
-  color: #888;
+  color: var(--text-muted);
   font-style: italic;
   text-align: center;
 }

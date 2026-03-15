@@ -197,9 +197,9 @@
   z-index: 1001;
 
   mat-button-toggle-group {
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--bg-overlay);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-md);
     border: none;
     overflow: hidden;
   }

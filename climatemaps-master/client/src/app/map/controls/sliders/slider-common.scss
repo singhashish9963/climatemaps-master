@@ -13,19 +13,19 @@
 
   // Active (filled) track
   .mdc-slider__track--active_fill {
-    border-color: #4f46e5 !important;
+    border-color: var(--primary) !important;
   }
 
   // Inactive track
   .mdc-slider__track--inactive {
-    background-color: #e2e8f0 !important;
+    background-color: var(--border-color) !important;
     opacity: 1 !important;
   }
 
   // Thumb knob
   .mdc-slider__thumb-knob {
-    background-color: #4f46e5 !important;
-    border-color: #4f46e5 !important;
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
     box-shadow: 0 1px 4px rgba(79, 70, 229, 0.35) !important;
     width: 16px !important;
     height: 16px !important;
@@ -49,13 +49,13 @@
 
   // Value bubble / tooltip
   .mdc-slider__value-indicator {
-    background-color: #4f46e5 !important;
+    background-color: var(--primary) !important;
     border-radius: 6px !important;
     padding: 2px 8px !important;
   }
 
   .mdc-slider__value-indicator::before {
-    border-top-color: #4f46e5 !important;
+    border-top-color: var(--primary) !important;
   }
 
   .mdc-slider__value-indicator-text {
@@ -69,11 +69,11 @@
   // Disabled state
   &.mdc-slider--disabled {
     .mdc-slider__track--active_fill {
-      border-color: #cbd5e1 !important;
+      border-color: var(--text-muted) !important;
     }
     .mdc-slider__thumb-knob {
-      background-color: #cbd5e1 !important;
-      border-color: #cbd5e1 !important;
+      background-color: var(--text-muted) !important;
+      border-color: var(--text-muted) !important;
       box-shadow: none !important;
     }
   }
@@ -104,7 +104,7 @@ mat-slider {
   font-size: 0.6875rem; // 11px
   font-weight: 500;
   letter-spacing: 0.01em;
-  color: #64748b;
+  color: var(--text-secondary);
 
   span {
     width: 0;

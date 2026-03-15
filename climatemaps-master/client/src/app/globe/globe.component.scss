@@ -15,8 +15,8 @@ $accent: #4f46e5;
 
 .globe-sidebar {
   width: 280px;
-  background: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
 
   .sidebar-content {
     padding: 8px;
@@ -47,15 +47,15 @@ $accent: #4f46e5;
   top: 10px;
   left: 10px;
   z-index: 1001;
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm) !important;
   border-radius: 8px !important;
-  color: #475569 !important;
+  color: var(--text-secondary) !important;
 
   &:hover {
-    background: #f8fafc !important;
-    color: $accent !important;
+    background: var(--bg-secondary) !important;
+    color: var(--primary) !important;
   }
 }
 
@@ -70,18 +70,18 @@ $accent: #4f46e5;
   gap: 4px;
 
   .nav-button {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm) !important;
     border-radius: 8px !important;
-    color: #475569 !important;
+    color: var(--text-secondary) !important;
     width: 36px;
     height: 36px;
     line-height: 36px;
 
     &:hover {
-      background: #f8fafc !important;
-      color: $accent !important;
+      background: var(--bg-secondary) !important;
+      color: var(--primary) !important;
     }
 
     .mat-icon {
@@ -98,18 +98,18 @@ $accent: #4f46e5;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-color);
   padding: 24px 32px;
   border-radius: 12px;
   text-align: center;
   z-index: 1002;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
 
   p {
     margin: 12px 0 0;
     font-size: 0.875rem;
-    color: #475569;
+    color: var(--text-secondary);
   }
 }
 
@@ -119,23 +119,23 @@ $accent: #4f46e5;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-color);
   padding: 5px 14px;
   border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   z-index: 1001;
   pointer-events: none;
 
   .info-value {
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #0f172a;
+    color: var(--text-heading);
     white-space: nowrap;
   }
 
   .prediction-indicator {
-    color: #7c3aed;
+    color: var(--accent-purple);
     font-style: italic;
     font-size: 0.75rem;
   }
@@ -148,11 +148,11 @@ $accent: #4f46e5;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1002;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-color);
   padding: 6px 14px;
   border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -160,7 +160,7 @@ $accent: #4f46e5;
   span {
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #475569;
+    color: var(--text-secondary);
     white-space: nowrap;
   }
 }
@@ -173,11 +173,11 @@ $accent: #4f46e5;
 .globe-click-tooltip {
   position: absolute;
   z-index: 1002;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
   pointer-events: auto;
   min-width: 200px;
   max-width: 260px;
@@ -190,55 +190,54 @@ $accent: #4f46e5;
     background: none;
     border: none;
     font-size: 18px;
-    color: #94a3b8;
+    color: var(--text-muted);
     cursor: pointer;
     padding: 0 4px;
     line-height: 1;
 
     &:hover {
-      color: #475569;
+      color: var(--text-secondary);
     }
   }
 
   .tooltip-value {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-heading);
     margin-bottom: 2px;
   }
 
   .tooltip-unit {
     font-size: 0.8125rem;
     font-weight: 400;
-    color: #64748b;
+    color: var(--text-secondary);
   }
 
   .tooltip-city {
     font-size: 0.75rem;
-    color: #475569;
+    color: var(--text-secondary);
     margin-bottom: 1px;
   }
 
   .tooltip-coords {
     font-size: 0.6875rem;
-    color: #94a3b8;
+    color: var(--text-muted);
   }
 }
 
 // ── Cesium overrides ──────────────────────────────────────────────────────────
 ::ng-deep {
   app-colorbar-json.globe-colorbar {
-    background: rgba(255, 255, 255, 0.82) !important;
+    background: var(--bg-overlay) !important;
 
     .colorbar-tick-label,
     .colorbar-label {
-      color: #0f172a !important;
+      color: var(--text-heading) !important;
       font-weight: 600 !important;
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.55);
     }
 
     .colorbar-tick-line {
-      background-color: #0f172a !important;
+      background-color: var(--text-heading) !important;
     }
   }
 

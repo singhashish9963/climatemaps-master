@@ -1,7 +1,7 @@
 .forecast-panel {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
 }
 
 .forecast-header {
@@ -11,7 +11,7 @@
 .forecast-title {
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -24,7 +24,7 @@
 
   span {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-muted);
   }
 }
 
@@ -43,7 +43,7 @@
 .forecast-label {
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   width: 28px;
   flex-shrink: 0;
 }
@@ -51,7 +51,7 @@
 .forecast-bar-wrap {
   flex: 1;
   height: 6px;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border-radius: 3px;
   overflow: hidden;
 }

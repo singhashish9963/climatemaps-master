@@ -6,16 +6,10 @@
   top: 0;
   z-index: 100;
   height: $navbar-height;
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--bg-overlay);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #e2e8f0;
-
-  // Dark mode
-  .dark-theme & {
-    background: rgba(15, 23, 42, 0.96);
-    border-bottom-color: #1e293b;
-  }
+  border-bottom: 1px solid var(--border-color);
 }
 
 // ── Nav inner container ────────────────────────────────────────
@@ -37,14 +31,10 @@
   font-size: 1.0625rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: #4f46e5;
+  color: var(--primary);
   flex-shrink: 0;
   margin-right: 0.5rem;
   white-space: nowrap;
-
-  .dark-theme & {
-    color: #818cf8;
-  }
 }
 
 // ── Desktop nav links strip ────────────────────────────────────
@@ -71,7 +61,7 @@
   border-radius: 6px;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
@@ -79,25 +69,14 @@
   cursor: pointer;
 
   &:hover {
-    color: #6366f1;
-    background-color: #eef2ff;
+    color: var(--primary);
+    background-color: var(--primary-active);
   }
 
   &.nav-link--active {
-    color: #6366f1;
-    background-color: #eef2ff;
+    color: var(--primary);
+    background-color: var(--primary-active);
     font-weight: 600;
-  }
-
-  // Dark mode
-  .dark-theme & {
-    color: #94a3b8;
-
-    &:hover,
-    &.nav-link--active {
-      color: #a5b4fc;
-      background-color: rgba(99, 102, 241, 0.15);
-    }
   }
 }
 
@@ -119,13 +98,9 @@
   display: inline-block;
   width: 1px;
   height: 18px;
-  background: #e2e8f0;
+  background: var(--border-color);
   margin: 0 4px;
   flex-shrink: 0;
-
-  .dark-theme & {
-    background: #1e293b;
-  }
 }
 
 // ── Flexible spacer ───────────────────────────────────────────
@@ -152,7 +127,7 @@
   border: none;
   background: transparent;
   border-radius: 6px;
-  color: #64748b;
+  color: var(--icon-muted);
   cursor: pointer;
   text-decoration: none;
   flex-shrink: 0;
@@ -160,8 +135,8 @@
   padding: 0;
 
   &:hover {
-    color: #6366f1;
-    background-color: #eef2ff;
+    color: var(--primary);
+    background-color: var(--primary-active);
   }
 
   mat-icon {
@@ -169,15 +144,6 @@
     width: 18px;
     height: 18px;
     line-height: 18px;
-  }
-
-  .dark-theme & {
-    color: #64748b;
-
-    &:hover {
-      color: #a5b4fc;
-      background-color: rgba(99, 102, 241, 0.15);
-    }
   }
 }
 
@@ -192,16 +158,11 @@
   position: sticky;
   top: $navbar-height;
   z-index: 99;
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--bg-overlay-strong);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-
-  .dark-theme & {
-    background: rgba(15, 23, 42, 0.98);
-    border-bottom-color: #1e293b;
-  }
 }
 
 .mobile-nav-link {
@@ -210,40 +171,26 @@
   padding: 0.625rem 1.25rem;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.15s, background-color 0.15s;
 
   &:hover {
-    color: #6366f1;
-    background-color: #eef2ff;
+    color: var(--primary);
+    background-color: var(--primary-active);
   }
 
   &.mobile-nav-link--active {
-    color: #6366f1;
-    background-color: #eef2ff;
+    color: var(--primary);
+    background-color: var(--primary-active);
     font-weight: 600;
-  }
-
-  .dark-theme & {
-    color: #94a3b8;
-
-    &:hover,
-    &.mobile-nav-link--active {
-      color: #a5b4fc;
-      background-color: rgba(99, 102, 241, 0.15);
-    }
   }
 }
 
 .mobile-sep {
   height: 1px;
-  background: #e2e8f0;
+  background: var(--border-color);
   margin: 4px 0;
-
-  .dark-theme & {
-    background: #1e293b;
-  }
 }
 
 .mobile-actions {
@@ -266,7 +213,7 @@
 .settings-label {
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin: 0.25rem 0 0;
@@ -277,20 +224,20 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: #fff;
+  background: var(--bg-primary);
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
   align-self: flex-start;
 
   &:hover {
-    background: #eef2ff;
-    border-color: #6366f1;
-    color: #6366f1;
+    background: var(--primary-active);
+    border-color: var(--primary);
+    color: var(--primary);
   }
 
   mat-icon {

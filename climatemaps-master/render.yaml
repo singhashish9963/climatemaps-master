@@ -1,8 +1,6 @@
 services:
   - type: web
     name: climatemaps-backend
-    env: python
+    runtime: docker
     rootDir: climatemaps-master/climatemaps-master
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn api.main:app --host=0.0.0.0 --port=8000
-    pythonVersion: 3.10.13
+    dockerfilePath: ./Dockerfile

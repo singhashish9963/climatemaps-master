@@ -1,7 +1,7 @@
 matplotlib>=3.8
 cartopy~=0.24.1
 numpy
-scipy~=1.15.3
+scipy>=1.10,<1.15
 fastapi~=0.115.12
 geojsoncontour==0.5.1
 # gdal==3.11.0 # Prefer `conda install -c conda-forge gdal==3.11.0` for system dependencies
